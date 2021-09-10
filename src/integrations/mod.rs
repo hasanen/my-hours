@@ -9,6 +9,6 @@ pub enum Action {
 
 pub fn execute(action: &Action) {
     match action {
-        Setup => println!("Setup a new integration"),
+        Action::Setup => println!("Setup a new integration"),
     }
 }
