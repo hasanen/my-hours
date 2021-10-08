@@ -1,6 +1,6 @@
 use structopt::StructOpt;
 
-mod toggl;
+pub mod toggl;
 
 #[derive(StructOpt, Debug)]
 pub enum Action {

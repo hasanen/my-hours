@@ -1,37 +1,29 @@
 //! Store and load settings
-use config;
+use crate::integrations::toggl::Config as TogglConfig;
 use directories_next::ProjectDirs;
-use std::collections::HashMap;
-use std::fs::{DirBuilder, File};
+use serde::{Deserialize, Serialize};
+use std::fs::{self, DirBuilder, File};
 use std::path::Path;
 use std::str::FromStr;
 
-/// Load all settings
-pub fn load() -> config::Config {
-    let mut settings = config::Config::default();
-
-    // Lin: /home/alice/.config/barapp
-    // Win: C:\Users\Alice\AppData\Roaming\Foo Corp\Bar App\config
-    // Mac: /Users/Alice/Library/Application Support/com.Foo-Corp.Bar-App
-
-    // settings
-    //     // Add in `./Settings.toml`
-    //     .merge(config::File::with_name("Settings"))
-    //     .unwrap()
-    let settings_path = settings_path().expect("Couldn't load settings");
-    settings
-        .merge(config::File::with_name(&settings_path))
-        .expect("Couldn't load settings");
-
-    settings
+/// Configs for the app
+/// - Toggl configs
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Config {
+    pub hours: Option<u8>,
+    pub toggl: Option<Vec<TogglConfig>>,
 }
 
-/// Store general setting
-pub fn store_value(key: &str, value: &str) {
-    let mut settings = load();
-    settings
-        .set(key, value)
-        .expect("There was a problem on saving the setting");
+impl Config {
+    pub fn save() {
+        println!("SAVEE");
+    }
+}
+/// Load all settings
+pub fn load() -> Config {
+    let settings_path = settings_path().expect("Couldn't load settings");
+    let settings_str = fs::read_to_string(settings_path).expect("Couldn't load settings");
+    return toml::from_str(&settings_str).unwrap();
 }
 
 fn settings_path() -> Option<String> {
