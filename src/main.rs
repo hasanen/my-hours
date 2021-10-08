@@ -1,3 +1,9 @@
+//! Keep track on your tracked hours in different services
+//!
+//! Currently supported services:
+//!   - Toggl track - <https://track.toggl.com>
+
+#![deny(missing_docs)]
 use config;
 use directories_next::BaseDirs;
 use structopt::StructOpt;
@@ -23,7 +29,7 @@ enum Subcommand {
 
 fn main() {
     let config = load_config();
-    println!("{:?}", config);
+    // println!("{:?}", config);
 
     let args = Arguments::from_args();
     match &args.subcommand {
