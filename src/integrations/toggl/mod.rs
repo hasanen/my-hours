@@ -5,8 +5,6 @@ use crate::settings;
 use read_input::prelude::*;
 use serde::{Deserialize, Serialize};
 
-static NAME: &str = "toggl";
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
     key: String,
@@ -15,24 +13,23 @@ pub struct Config {
 /// Setup a new toggl integration. You will need an API key, which you can get from your profile page <https://track.toggl.com/profile>
 pub fn setup() {
     println!("Toggl API key:");
-    // let api_key = input::<String>().get();
-    let api_key = "keykeykey";
+    let api_key = input::<String>().get();
 
     let toggl = Config {
         key: String::from(api_key),
     };
 
     let mut config = settings::load();
-    println!("{:?}", config);
-    if config.toggls.is_none() {
-        config.toggls = Some(vec![toggl])
+    if config.toggl.is_none() {
+        config.toggl = Some(vec![toggl])
     } else {
-        println!("lol");
+        let mut toggls = config.toggl.unwrap();
+        toggls.push(toggl);
+        config.toggl = Some(toggls);
     }
-    println!("{:?}", config);
-    config.save()
-}
 
-fn key(key: &str) -> String {
-    return format!("{}.{}", NAME, key);
+    match settings::save(config) {
+        Ok(_config) => println!("New toggle configuration saved!"),
+        Err(err) => println!("Couldn't add new toggl configuration: {}", err),
+    }
 }
