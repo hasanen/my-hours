@@ -23,9 +23,27 @@ async fn get(path: &str, api_key: &str) -> Result<reqwest::Response, reqwest::Er
         .send()
         .await?;
 
+    check_status(&response);
     Ok(response)
 }
 
 fn api_url(path: &str) -> String {
     String::from(format!("{}/{}", API_URL, path))
+}
+
+fn check_status(response: &reqwest::Response) {
+    match response.error_for_status_ref() {
+        Ok(_res) => (),
+        Err(err) => {
+            match err.status() {
+                Some(reqwest::StatusCode::FORBIDDEN) => {
+                    println! {"API responded with 403, check your api key."}
+                }
+                _ => {
+                    println! {"API responded with {}, not sure what to do.", err.status().unwrap().as_u16()}
+                }
+            }
+            std::process::exit(1);
+        }
+    }
 }
