@@ -2,7 +2,9 @@
 //!
 //! API docs: <https://github.com/toggl/toggl_api_docs/blob/master/toggl_api.md>
 
+use crate::hours;
 use crate::settings;
+use chrono::{offset::TimeZone, Date, Datelike, Duration, Local, NaiveDate};
 use read_input::prelude::*;
 use serde::{Deserialize, Serialize};
 mod api;
@@ -10,12 +12,12 @@ mod api;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
     key: String,
-    workspaces: Vec<Workspace>,
+    pub workspaces: Vec<Workspace>,
 }
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Workspace {
-    id: usize,
-    name: String,
+    pub id: usize,
+    pub name: String,
 }
 
 /// Setup a new toggl integration. You will need an API key, which you can get from your profile page <https://track.toggl.com/profile>
@@ -49,4 +51,34 @@ pub fn setup() {
         Ok(_config) => println!("New toggle configuration saved!"),
         Err(err) => println!("Couldn't add new toggl configuration: {}", err),
     }
+}
+
+pub fn time_entries_for_month(config: &Config, date: Date<Local>) -> Vec<hours::types::TimeEntry> {
+    let workspace_ids: Vec<usize> = config.workspaces.iter().map(|w| w.id).collect();
+    let year = date.year();
+    let month = date.month();
+    // let month = 9;
+    let start_date = NaiveDate::from_ymd(year, month, 1);
+    let end_date = NaiveDate::from_ymd(year, month + 1, 1).pred();
+
+    let time_entries: Vec<Vec<api::types::TimeEntry>> = workspace_ids
+        .iter()
+        .map(|workspace_id| {
+            return api::get_time_entries(
+                workspace_id,
+                &Local.from_local_date(&start_date).unwrap(),
+                &Local.from_local_date(&end_date).unwrap(),
+                &config.key,
+            );
+        })
+        .collect();
+
+    time_entries
+        .concat()
+        .iter()
+        .map(|api_entry| hours::types::TimeEntry {
+            description: api_entry.description,
+            start: api_entry.start,
+            end: api_entry.end,
+        });
 }
