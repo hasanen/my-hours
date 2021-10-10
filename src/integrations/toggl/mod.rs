@@ -78,6 +78,12 @@ pub fn time_entries_for_month(config: &Config, date: Date<Local>) -> Vec<hours::
         .iter()
         .map(|api_entry| hours::types::TimeEntry {
             description: String::from(api_entry.description.as_ref().unwrap_or(&String::from(""))),
+            project: [api_entry.client.as_ref(), api_entry.project.as_ref()]
+                .iter()
+                .filter(|string| string.is_some())
+                .map(|string| String::from(string.unwrap()))
+                .collect::<Vec<String>>()
+                .join(" / "),
             start: api_entry.start,
             end: api_entry.end,
         })
