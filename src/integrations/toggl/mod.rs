@@ -4,7 +4,7 @@
 
 use crate::hours;
 use crate::settings;
-use chrono::{offset::TimeZone, Date, Datelike, Duration, Local, NaiveDate};
+use chrono::{offset::TimeZone, Date, Datelike, Local, NaiveDate};
 use read_input::prelude::*;
 use serde::{Deserialize, Serialize};
 mod api;
@@ -57,7 +57,6 @@ pub fn time_entries_for_month(config: &Config, date: Date<Local>) -> Vec<hours::
     let workspace_ids: Vec<usize> = config.workspaces.iter().map(|w| w.id).collect();
     let year = date.year();
     let month = date.month();
-    // let month = 9;
     let start_date = NaiveDate::from_ymd(year, month, 1);
     let end_date = NaiveDate::from_ymd(year, month + 1, 1).pred();
 

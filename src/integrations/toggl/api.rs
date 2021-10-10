@@ -1,5 +1,5 @@
 pub mod types;
-use chrono::{Date, Datelike, Local};
+use chrono::{Date, Local};
 use std::collections::HashMap;
 
 static API_URL: &str = "https://api.track.toggl.com/";
@@ -28,32 +28,29 @@ pub async fn get_time_entries(
     api_key: &str,
 ) -> Vec<types::TimeEntry> {
     let mut time_entries = Vec::new();
-    let params: HashMap<String, String> = [
-        ("workspace_id".to_string(), workspace_id.to_string()),
-        (
-            "since".to_string(),
-            start_date.format(DATE_FORMAT).to_string(),
-        ),
-        (
-            "until".to_string(),
-            end_date.format(DATE_FORMAT).to_string(),
-        ),
-        ("user_agent".to_string(), USER_AGENT.to_string()),
-    ]
-    .iter()
-    .cloned()
-    .collect();
 
-    let time_entry_response: types::TimeEntryResponse =
-        get(&"reports/api/v2/details", api_key, &Some(params))
-            .await
-            .unwrap()
-            .json()
-            .await
-            .unwrap();
+    let mut items_fetch: usize = 0;
+    let mut items_left = true;
+    let mut page = 1;
 
-    if (time_entry_response.total_count > time_entry_response.per_page) {}
-    time_entries.push(time_entry_response.data);
+    while items_left {
+        let params = time_entries_params(workspace_id, start_date, end_date, &page);
+        let time_entry_response: types::TimeEntryResponse =
+            get(&"reports/api/v2/details", api_key, &params)
+                .await
+                .unwrap()
+                .json()
+                .await
+                .unwrap();
+        time_entries.push(time_entry_response.data.clone());
+        items_fetch += time_entry_response.data.len();
+        page += 1;
+
+        if items_fetch >= time_entry_response.total_count {
+            items_left = false;
+        }
+    }
+
     time_entries.concat()
 }
 
@@ -95,4 +92,30 @@ fn check_status(response: &reqwest::Response) {
             std::process::exit(1);
         }
     }
+}
+
+fn time_entries_params(
+    workspace_id: &usize,
+    start_date: &Date<Local>,
+    end_date: &Date<Local>,
+    page: &usize,
+) -> Option<HashMap<String, String>> {
+    let params = [
+        ("workspace_id".to_string(), workspace_id.to_string()),
+        (
+            "since".to_string(),
+            start_date.format(DATE_FORMAT).to_string(),
+        ),
+        (
+            "until".to_string(),
+            end_date.format(DATE_FORMAT).to_string(),
+        ),
+        ("user_agent".to_string(), USER_AGENT.to_string()),
+        ("page".to_string(), page.to_string()),
+    ]
+    .iter()
+    .cloned()
+    .collect();
+
+    return Some(params);
 }
