@@ -30,18 +30,24 @@ pub fn save(config: Config) -> Result<(), std::io::Error> {
     let toml = toml::to_string(&config).unwrap();
     return fs::write(settings_path, toml);
 }
+/// Folder of app's settings and files
+pub fn app_folder() -> Option<String> {
+    let proj_dirs = ProjectDirs::from("com", "Piece Of Code", "Hours")?;
+
+    if !proj_dirs.config_dir().exists() {
+        DirBuilder::new()
+            .recursive(true)
+            .create(proj_dirs.config_dir())
+            .unwrap()
+    }
+    let folder = proj_dirs.config_dir().to_str().unwrap();
+    return Some(folder.to_string());
+}
 
 fn settings_path() -> Option<String> {
-    if let Some(proj_dirs) = ProjectDirs::from("com", "Piece Of Code", "Hours") {
-        if !proj_dirs.config_dir().exists() {
-            DirBuilder::new()
-                .recursive(true)
-                .create(proj_dirs.config_dir())
-                .unwrap()
-        }
-        let folder = proj_dirs.config_dir().to_str().unwrap();
+    if let Some(folder) = app_folder() {
         let settings_file_path =
-            format!("{}/{}", String::from_str(folder).unwrap(), CONFIG_FILENAME);
+            format!("{}/{}", String::from_str(&folder).unwrap(), CONFIG_FILENAME);
         if !Path::new(&settings_file_path).exists() {
             File::create(&settings_file_path).expect(&format!(
                 "Couldn't create settings file {}",
