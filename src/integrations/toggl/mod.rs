@@ -23,8 +23,14 @@ pub fn setup() {
     };
 
     let mut config = settings::load();
-
     println!("{:?}", config);
+    if config.toggls.is_none() {
+        config.toggls = Some(vec![toggl])
+    } else {
+        println!("lol");
+    }
+    println!("{:?}", config);
+    config.save()
 }
 
 fn key(key: &str) -> String {

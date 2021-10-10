@@ -10,12 +10,14 @@ use std::str::FromStr;
 /// - Toggl configs
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
+    /// Target daily hours
     pub hours: Option<u8>,
-    pub toggl: Option<Vec<TogglConfig>>,
+    /// Toggl configurations
+    pub toggls: Option<Vec<TogglConfig>>,
 }
 
 impl Config {
-    pub fn save() {
+    fn save() {
         println!("SAVEE");
     }
 }
