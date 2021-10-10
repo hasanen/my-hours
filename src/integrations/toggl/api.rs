@@ -52,9 +52,6 @@ pub async fn get_time_entries(
             .await
             .unwrap();
 
-    println!("{:?}", time_entry_response.per_page);
-    println!("{:?}", time_entry_response.total_count);
-    println!("{:?}", time_entry_response.data.len());
     if (time_entry_response.total_count > time_entry_response.per_page) {}
     time_entries.push(time_entry_response.data);
     time_entries.concat()

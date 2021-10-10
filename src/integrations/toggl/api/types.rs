@@ -1,4 +1,4 @@
-use chrono::{serde::ts_seconds_option, DateTime, Datelike, Local};
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -19,8 +19,6 @@ pub struct TimeEntry {
     pub description: Option<String>,
     pub client: Option<String>,
     pub project: Option<String>,
-    #[serde(with = "ts_seconds_option")]
     pub start: Option<DateTime<Local>>,
-    #[serde(with = "ts_seconds_option")]
     pub end: Option<DateTime<Local>>,
 }

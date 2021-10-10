@@ -73,12 +73,13 @@ pub fn time_entries_for_month(config: &Config, date: Date<Local>) -> Vec<hours::
         })
         .collect();
 
-    time_entries
+    return time_entries
         .concat()
         .iter()
         .map(|api_entry| hours::types::TimeEntry {
-            description: api_entry.description,
+            description: String::from(api_entry.description.as_ref().unwrap_or(&String::from(""))),
             start: api_entry.start,
             end: api_entry.end,
-        });
+        })
+        .collect();
 }

@@ -14,5 +14,5 @@ pub fn refresh() {
     println!("refresh");
     let time_entries = integrations::get_monthly_time_entries();
 
-    println!("{:?}", time_entries)
+    println!("{:?}", time_entries.entries.len())
 }
