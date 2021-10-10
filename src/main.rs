@@ -20,16 +20,21 @@ struct Arguments {
 #[derive(StructOpt, Debug)]
 enum Subcommand {
     #[structopt(name = "integrations")]
+    /// Manage integrations
     IntegrationsCommand {
         #[structopt(subcommand)]
         action: integrations::Action,
     },
+    #[structopt(name = "refresh")]
+    /// Refresh hours through integrations
+    Refresh,
 }
 
 fn main() {
     let args = Arguments::from_args();
     match &args.subcommand {
         Some(Subcommand::IntegrationsCommand { action }) => integrations::execute(action),
-        None => hours::execute(),
+        Some(_refresh) => hours::refresh(),
+        None => hours::show_monthly_hours(),
     }
 }
