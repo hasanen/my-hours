@@ -7,9 +7,10 @@ pub struct TimeEntry {
     pub project: String,
     pub start: Option<DateTime<Local>>,
     pub end: Option<DateTime<Local>>,
+    pub billable_amount_cents: usize,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TimeEntries {
     pub entries: Vec<TimeEntry>,
 }

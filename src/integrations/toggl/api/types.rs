@@ -21,4 +21,5 @@ pub struct TimeEntry {
     pub project: Option<String>,
     pub start: Option<DateTime<Local>>,
     pub end: Option<DateTime<Local>>,
+    pub billable: Option<f32>,
 }

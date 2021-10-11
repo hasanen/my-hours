@@ -85,6 +85,7 @@ pub fn time_entries_for_month(config: &Config, date: Date<Local>) -> Vec<hours::
                 .join(" / "),
             start: api_entry.start,
             end: api_entry.end,
+            billable_amount_cents: (api_entry.billable.unwrap_or(0.0) * 100.0) as usize,
         })
         .collect();
 }

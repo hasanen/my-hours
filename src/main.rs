@@ -34,7 +34,7 @@ fn main() {
     let args = Arguments::from_args();
     match &args.subcommand {
         Some(Subcommand::IntegrationsCommand { action }) => integrations::execute(action),
-        Some(_refresh) => hours::refresh(),
+        Some(_refresh) => hours::refresh_all(),
         None => hours::show_monthly_hours(),
     }
 }
