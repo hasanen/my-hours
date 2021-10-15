@@ -14,6 +14,8 @@ static CONFIG_FILENAME: &str = "settings.toml";
 pub struct Config {
     /// Target daily hours
     pub hours: Option<u8>,
+    /// Refresh time entries from integrations if latest entry end time is older than current time + this treshold. Use minutes
+    pub refresh_treshold: Option<usize>,
     /// Toggl configurations
     pub toggl: Option<Vec<TogglConfig>>,
 }
