@@ -19,12 +19,11 @@ pub struct TimeEntries {
 impl TimeEntries {
     pub fn uniq_projects(&self) -> Vec<String> {
         let mut projects = HashSet::new();
-        let mut projects_as_vec = Vec::new();
 
         for entry in self.entries.iter() {
             projects.insert(entry.project.to_string());
         }
-        projects_as_vec = projects.iter().map(|a| a.to_string()).collect();
+        let mut projects_as_vec: Vec<String> = projects.iter().map(|a| a.to_string()).collect();
         projects_as_vec.sort_by(|a, b| a.partial_cmp(b).unwrap());
         return projects_as_vec;
     }

@@ -1,11 +1,19 @@
 //! Print time entries to terminal in table
 use crate::hours::types;
-use prettytable::{Attr, Cell, Row, Table};
+use prettytable::{format, Attr, Cell, Row, Table};
 
 /// Prints given entries to terminal
 pub fn print(time_entries: &types::TimeEntries) {
+    print_hours_table(time_entries);
+    println!("");
+    println!("");
+    print_common_table();
+}
+
+fn print_hours_table(time_entries: &types::TimeEntries) {
     let mut table = Table::new();
-    table.add_row(Row::new(vec![
+    table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
+    table.set_titles(Row::new(vec![
         header_cell(&"Project"),
         header_cell(&"Today"),
         header_cell(&"Daily AVG"),
@@ -23,9 +31,30 @@ pub fn print(time_entries: &types::TimeEntries) {
             Cell::new(""),
         ]));
     }
+    table.add_row(Row::new(vec![
+        Cell::new("Total").style_spec("i"),
+        Cell::new(""),
+        Cell::new(""),
+        Cell::new(""),
+        Cell::new(""),
+        Cell::new(""),
+    ]));
     table.printstd();
 }
-
+fn print_common_table() {
+    let mut table = Table::new();
+    table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
+    table.add_row(Row::new(vec![
+        header_cell(&"Work days left"),
+        Cell::new(""),
+    ]));
+    table.add_row(Row::new(vec![
+        header_cell(&"Target AVG / day"),
+        Cell::new(""),
+    ]));
+    table.add_row(Row::new(vec![header_cell(&"Hours left"), Cell::new("")]));
+    table.printstd();
+}
 fn header_cell(title: &str) -> Cell {
     return Cell::new(title).with_style(Attr::Bold);
 }
