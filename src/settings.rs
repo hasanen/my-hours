@@ -1,5 +1,6 @@
 //! Store and load settings
 use crate::integrations::toggl::Config as TogglConfig;
+use chrono::{DateTime, Local};
 use directories_next::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use std::fs::{self, DirBuilder, File};
@@ -16,6 +17,8 @@ pub struct Config {
     pub hours: Option<u8>,
     /// Refresh time entries from integrations if latest entry end time is older than current time + this treshold. Use minutes
     pub refresh_treshold: Option<usize>,
+    /// When hours were refreshed last time
+    pub refreshed_at: Option<DateTime<Local>>,
     /// Toggl configurations
     pub toggl: Option<Vec<TogglConfig>>,
 }
@@ -31,6 +34,15 @@ pub fn save(config: Config) -> Result<(), std::io::Error> {
     let settings_path = settings_path().expect(&format!("Failed to locate {}", CONFIG_FILENAME));
     let toml = toml::to_string(&config).unwrap();
     return fs::write(settings_path, toml);
+}
+/// Mark hours as refreshed
+pub fn hours_refreshed() {
+    let mut settings = load();
+    settings.refreshed_at = Some(Local::now());
+    match save(settings) {
+        Ok(_) => {}
+        Err(err) => println!("Error occured during refreshing hours: {}", err),
+    };
 }
 /// Get path to a file in app's folder. If file doesn't exist, it will be created
 pub fn app_path(file: &str) -> Option<String> {
