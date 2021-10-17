@@ -4,6 +4,7 @@ use prettytable::{format, Attr, Cell, Row, Table};
 
 /// Prints given entries to terminal
 pub fn print(time_entries: &types::TimeEntries) {
+    println!("");
     print_hours_table(time_entries);
     println!("");
     println!("");
@@ -43,16 +44,24 @@ fn print_hours_table(time_entries: &types::TimeEntries) {
 }
 fn print_common_table() {
     let mut table = Table::new();
-    table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
+    let format = format::FormatBuilder::new()
+        .column_separator(' ')
+        .borders(' ')
+        .padding(0, 2)
+        .build();
+    table.set_format(format);
     table.add_row(Row::new(vec![
         header_cell(&"Work days left"),
-        Cell::new(""),
+        Cell::new("12").style_spec("r"),
     ]));
     table.add_row(Row::new(vec![
         header_cell(&"Target AVG / day"),
-        Cell::new(""),
+        Cell::new("2").style_spec("r"),
     ]));
-    table.add_row(Row::new(vec![header_cell(&"Hours left"), Cell::new("")]));
+    table.add_row(Row::new(vec![
+        header_cell(&"Hours left"),
+        Cell::new("2").style_spec("r"),
+    ]));
     table.printstd();
 }
 fn header_cell(title: &str) -> Cell {
