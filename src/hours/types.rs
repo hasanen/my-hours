@@ -5,13 +5,29 @@ use std::collections::HashSet;
 pub trait TimeEntryCalculations {
     fn entries(&self) -> &Vec<TimeEntry>;
     fn total_hours(&self) -> Duration {
-        let duration = self
+        let durations = self
             .entries()
             .iter()
+            .map(|entry| entry.duration())
+            .collect();
+        return Self::sum(&durations);
+    }
+    fn total_hours_for_current_day(&self) -> Duration {
+        let durations = self
+            .entries()
+            .iter()
+            .filter(|entry| entry.is_for_current_date())
+            .map(|entry| entry.duration())
+            .collect();
+        return Self::sum(&durations);
+    }
+
+    fn sum(durations: &Vec<Duration>) -> Duration {
+        return durations
+            .iter()
             .fold(Duration::minutes(0), |total_dur, entry| {
-                total_dur.checked_add(&entry.duration()).unwrap()
+                total_dur.checked_add(&entry).unwrap()
             });
-        return duration;
     }
 }
 
@@ -27,6 +43,9 @@ pub struct TimeEntry {
 impl TimeEntry {
     pub fn duration(&self) -> Duration {
         return self.end.unwrap().signed_duration_since(self.start.unwrap());
+    }
+    pub fn is_for_current_date(&self) -> bool {
+        return self.start.unwrap().date() == Local::today();
     }
 }
 
