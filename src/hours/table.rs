@@ -72,7 +72,11 @@ fn header_cell(title: &str) -> Cell {
     return Cell::new(title).with_style(Attr::Bold);
 }
 fn format_duration(duration: &chrono::Duration) -> String {
-    let hours = duration.num_hours();
-    let minutes = duration.num_minutes() - hours * 60;
-    return format!("{:3}h {:2}m", hours, minutes);
+    if duration.num_minutes() > 0 {
+        let hours = duration.num_hours();
+        let minutes = duration.num_minutes() - hours * 60;
+        format!("{:3}h {:2}m", hours, minutes)
+    } else {
+        "".to_string()
+    }
 }
