@@ -30,7 +30,7 @@ pub fn load() -> Config {
     return toml::from_str(&settings_str).unwrap();
 }
 /// Store config to filestystem
-pub fn save(config: Config) -> Result<(), std::io::Error> {
+pub fn save(config: &Config) -> Result<(), std::io::Error> {
     let settings_path = settings_path().expect(&format!("Failed to locate {}", CONFIG_FILENAME));
     let toml = toml::to_string(&config).unwrap();
     return fs::write(settings_path, toml);
@@ -39,7 +39,7 @@ pub fn save(config: Config) -> Result<(), std::io::Error> {
 pub fn hours_refreshed() {
     let mut settings = load();
     settings.refreshed_at = Some(Local::now());
-    match save(settings) {
+    match save(&settings) {
         Ok(_) => {}
         Err(err) => println!("Error occured during refreshing hours: {}", err),
     };

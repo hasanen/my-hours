@@ -2,10 +2,9 @@
 //!
 //! API docs: <https://github.com/toggl/toggl_api_docs/blob/master/toggl_api.md>
 
-use crate::hours;
+use crate::hours::{self, ui};
 use crate::settings;
 use chrono::{offset::TimeZone, Date, Datelike, Local, NaiveDate};
-use read_input::prelude::*;
 use serde::{Deserialize, Serialize};
 mod api;
 
@@ -22,8 +21,7 @@ pub struct Workspace {
 
 /// Setup a new toggl integration. You will need an API key, which you can get from your profile page <https://track.toggl.com/profile>
 pub fn setup() {
-    println!("Toggl API key:");
-    let api_key = input::<String>().get();
+    let api_key = ui::ask_input::<String>(&"Toggl API key:");
 
     let workspaces = api::get_workspaces(&api_key)
         .iter()
@@ -47,7 +45,7 @@ pub fn setup() {
         config.toggl = Some(toggls);
     }
 
-    match settings::save(config) {
+    match settings::save(&config) {
         Ok(_config) => println!("New toggle configuration saved!"),
         Err(err) => println!("Couldn't add new toggl configuration: {}", err),
     }

@@ -94,3 +94,28 @@ impl TimeEntryCalculations for Project {
         return &self.entries;
     }
 }
+
+#[derive(Debug)]
+pub struct CommonHours<'a> {
+    pub target_daily_hours: &'a u8,
+    pub monthly_work_days: &'a u8,
+    pub monthly_work_days_used: &'a u8,
+    pub total_hours: &'a Duration,
+}
+
+impl CommonHours<'_> {
+    pub fn work_days_left(&self) -> u8 {
+        if self.monthly_work_days_used >= self.monthly_work_days {
+            0
+        } else {
+            self.monthly_work_days - self.monthly_work_days_used
+        }
+    }
+    pub fn hours_left(&self) -> Duration {
+        let target_hours_in_minutes = self.monthly_work_days * self.target_daily_hours;
+        match Duration::hours(target_hours_in_minutes as i64).checked_sub(&self.total_hours) {
+            Some(duration) => return duration,
+            None => Duration::minutes(0),
+        }
+    }
+}
