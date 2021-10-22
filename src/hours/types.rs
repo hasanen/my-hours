@@ -1,8 +1,21 @@
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Duration, Local};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+pub trait TimeEntryCalculations {
+    fn entries(&self) -> &Vec<TimeEntry>;
+    fn total_hours(&self) -> Duration {
+        let duration = self
+            .entries()
+            .iter()
+            .fold(Duration::minutes(0), |total_dur, entry| {
+                total_dur.checked_add(&entry.duration()).unwrap()
+            });
+        return duration;
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Hash)]
 pub struct TimeEntry {
     pub description: String,
     pub project: String,
@@ -11,20 +24,54 @@ pub struct TimeEntry {
     pub billable_amount_cents: usize,
 }
 
+impl TimeEntry {
+    pub fn duration(&self) -> Duration {
+        return self.end.unwrap().signed_duration_since(self.start.unwrap());
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TimeEntries {
     pub entries: Vec<TimeEntry>,
 }
-
+impl TimeEntryCalculations for TimeEntries {
+    fn entries(&self) -> &Vec<TimeEntry> {
+        return &self.entries;
+    }
+}
 impl TimeEntries {
-    pub fn uniq_projects(&self) -> Vec<String> {
+    pub fn uniq_projects(&self) -> Vec<Project> {
         let mut projects = HashSet::new();
 
         for entry in self.entries.iter() {
-            projects.insert(entry.project.to_string());
+            let project = Project {
+                title: entry.project.to_string(),
+                entries: self.entries_for_project(&entry.project),
+            };
+            projects.insert(project);
         }
-        let mut projects_as_vec: Vec<String> = projects.iter().map(|a| a.to_string()).collect();
-        projects_as_vec.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        let mut projects_as_vec: Vec<Project> = projects.iter().map(|a| a.clone()).collect();
+        projects_as_vec.sort_by(|a, b| a.title.partial_cmp(&b.title).unwrap());
         return projects_as_vec;
+    }
+
+    fn entries_for_project(&self, project_title: &str) -> Vec<TimeEntry> {
+        return self
+            .entries
+            .iter()
+            .filter(|entry| entry.project.eq(project_title))
+            .cloned()
+            .collect();
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+pub struct Project {
+    pub title: String,
+    pub entries: Vec<TimeEntry>,
+}
+impl TimeEntryCalculations for Project {
+    fn entries(&self) -> &Vec<TimeEntry> {
+        return &self.entries;
     }
 }
