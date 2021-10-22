@@ -20,7 +20,6 @@ fn print_hours_table(time_entries: &types::TimeEntries) {
         header_cell(&"Daily AVG"),
         header_cell(&"This month"),
         header_cell(&"Target"),
-        header_cell(&"Billing"),
     ]));
     for project in time_entries.uniq_projects() {
         table.add_row(Row::new(vec![
@@ -28,7 +27,6 @@ fn print_hours_table(time_entries: &types::TimeEntries) {
             Cell::new(&format_duration(&project.total_hours_for_current_day())),
             Cell::new(""),
             Cell::new(&format_duration(&project.total_hours())),
-            Cell::new(""),
             Cell::new(""),
         ]));
     }
@@ -40,7 +38,6 @@ fn print_hours_table(time_entries: &types::TimeEntries) {
         .style_spec("bFg"),
         Cell::new(""),
         Cell::new(&format_duration(&time_entries.total_hours())).style_spec("bFg"),
-        Cell::new(""),
         Cell::new(""),
     ]));
     table.printstd();
