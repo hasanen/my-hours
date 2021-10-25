@@ -18,5 +18,11 @@ pub fn load() -> types::TimeEntries {
     let monthly_hours_path =
         settings::app_path(&HOURS_FILENAME).expect(&format!("Failed to locate {}", HOURS_FILENAME));
     let hours_str = fs::read_to_string(monthly_hours_path).expect("Couldn't load settings");
-    return toml::from_str(&hours_str).unwrap();
+    if hours_str.trim().is_empty() {
+        types::TimeEntries {
+            entries: Vec::new()
+        }
+    } else {
+        toml::from_str(&hours_str).unwrap()
+    }
 }

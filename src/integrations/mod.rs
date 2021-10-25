@@ -33,15 +33,18 @@ pub fn execute(action: &Action) {
 pub fn get_monthly_time_entries() -> TimeEntries {
     let settings = settings::load();
 
-    let entries: Vec<Vec<TimeEntry>> = settings
-        .toggl
-        .unwrap()
-        .iter()
-        .map(|toggl_config| {
-            let toggl_entries = toggl::time_entries_for_month(toggl_config, Local::today());
-            return toggl_entries;
-        })
-        .collect();
+    let entries: Vec<Vec<TimeEntry>> = match settings.toggl {
+        Some(toggl) => {
+            toggl.iter()
+                .map(|toggl_config| {
+                    let toggl_entries = toggl::time_entries_for_month(toggl_config, Local::today());
+                    return toggl_entries;
+                })
+                .collect()
+        },
+        None => Vec::new()
+    };
+        
 
     let time_entries = TimeEntries {
         entries: entries.concat(),
