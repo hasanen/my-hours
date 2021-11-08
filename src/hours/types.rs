@@ -84,6 +84,7 @@ impl TimeEntries {
     }
 }
 
+//TODO: Add attribute to determine if project's hours should be included in monthly target
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Project {
     pub title: String,
@@ -111,6 +112,7 @@ impl CommonHours<'_> {
             self.monthly_work_days - self.monthly_work_days_used
         }
     }
+    //TODO SHould calculate only certain projects
     pub fn hours_left(&self) -> Duration {
         let target_hours_in_minutes = self.monthly_work_days * self.target_daily_hours;
         match Duration::hours(target_hours_in_minutes as i64).checked_sub(&self.total_hours) {
