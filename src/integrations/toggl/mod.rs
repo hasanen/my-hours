@@ -8,12 +8,12 @@ use chrono::{offset::TimeZone, Date, Datelike, Local, NaiveDate};
 use serde::{Deserialize, Serialize};
 mod api;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
     key: String,
     pub workspaces: Vec<Workspace>,
 }
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Workspace {
     pub id: usize,
     pub name: String,
@@ -75,12 +75,8 @@ pub fn time_entries_for_month(config: &Config, date: Date<Local>) -> Vec<hours::
         .iter()
         .map(|api_entry| hours::types::TimeEntry {
             description: String::from(api_entry.description.as_ref().unwrap_or(&String::from(""))),
-            project: [api_entry.client.as_ref(), api_entry.project.as_ref()]
-                .iter()
-                .filter(|string| string.is_some())
-                .map(|string| String::from(string.unwrap()))
-                .collect::<Vec<String>>()
-                .join(" / "),
+            client: api_entry.client.clone(),
+            project: String::from(api_entry.project.as_ref().unwrap()),
             start: api_entry.start,
             end: api_entry.end,
             billable_amount_cents: (api_entry.billable.unwrap_or(0.0) * 100.0) as usize,

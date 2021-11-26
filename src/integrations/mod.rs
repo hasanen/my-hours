@@ -15,7 +15,7 @@ pub enum Action {
     },
 }
 
-#[derive(StructOpt, Debug)]
+#[derive(StructOpt, Debug, Clone)]
 pub enum Integration {
     #[structopt(name = "toggl")]
     TogglIntegration,
@@ -34,17 +34,15 @@ pub fn get_monthly_time_entries() -> TimeEntries {
     let settings = settings::load();
 
     let entries: Vec<Vec<TimeEntry>> = match settings.toggl {
-        Some(toggl) => {
-            toggl.iter()
-                .map(|toggl_config| {
-                    let toggl_entries = toggl::time_entries_for_month(toggl_config, Local::today());
-                    return toggl_entries;
-                })
-                .collect()
-        },
-        None => Vec::new()
+        Some(toggl) => toggl
+            .iter()
+            .map(|toggl_config| {
+                let toggl_entries = toggl::time_entries_for_month(toggl_config, Local::today());
+                return toggl_entries;
+            })
+            .collect(),
+        None => Vec::new(),
     };
-        
 
     let time_entries = TimeEntries {
         entries: entries.concat(),

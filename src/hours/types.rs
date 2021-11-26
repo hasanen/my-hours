@@ -1,6 +1,9 @@
 use chrono::{offset::TimeZone, Date, DateTime, Datelike, Duration, Local, NaiveDate, Weekday};
+use digest::{generic_array::GenericArray, Digest};
 use serde::{Deserialize, Serialize};
+use sha2::{Sha256, Sha512};
 use std::collections::HashSet;
+use std::str;
 
 pub trait TimeEntryCalculations {
     fn entries(&self) -> &Vec<TimeEntry>;
@@ -84,6 +87,7 @@ pub trait TimeEntryCalculations {
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Hash)]
 pub struct TimeEntry {
     pub description: String,
+    pub client: Option<String>,
     pub project: String,
     pub start: Option<DateTime<Local>>,
     pub end: Option<DateTime<Local>>,
@@ -113,8 +117,13 @@ impl TimeEntries {
         let mut projects = HashSet::new();
 
         for entry in self.entries.iter() {
+            let mut hasher = Sha256::default();
+            hasher.update(entry.project.to_string());
+            let finalized_hash = format!("{:x}", &hasher.finalize());
             let project = Project {
                 title: entry.project.to_string(),
+                client: entry.client.clone(),
+                key: finalized_hash,
                 entries: self.entries_for_project(&entry.project),
             };
             projects.insert(project);
@@ -134,10 +143,11 @@ impl TimeEntries {
     }
 }
 
-//TODO: Add attribute to determine if project's hours should be included in monthly target
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Project {
+    pub client: Option<String>,
     pub title: String,
+    pub key: String,
     pub entries: Vec<TimeEntry>,
 }
 impl TimeEntryCalculations for Project {

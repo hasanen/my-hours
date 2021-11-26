@@ -1,8 +1,10 @@
 //! Store and load settings
+use crate::hours::types::Project;
 use crate::integrations::toggl::Config as TogglConfig;
 use chrono::{DateTime, Local};
 use directories_next::ProjectDirs;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fs::{self, DirBuilder, File};
 use std::path::Path;
 use std::str::FromStr;
@@ -10,17 +12,32 @@ use std::str::FromStr;
 static CONFIG_FILENAME: &str = "settings.toml";
 
 /// Configs for the app
-/// - Toggl configs
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
-    /// Target daily hours
-    pub hours: Option<u8>,
     /// Refresh time entries from integrations if latest entry end time is older than current time + this treshold. Use minutes
     pub refresh_treshold: Option<usize>,
     /// When hours were refreshed last time
     pub refreshed_at: Option<DateTime<Local>>,
     /// Toggl configurations
     pub toggl: Option<Vec<TogglConfig>>,
+    /// Settings for projects
+    pub project_configs: Option<ProjectConfigs>,
+}
+/// Configs for the projects
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ProjectConfigs {
+    /// Existing configs
+    pub configs: HashMap<String, ProjectConfig>,
+}
+/// Single config project
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ProjectConfig {
+    /// Target daily hours
+    pub target_daily_hours: Option<u8>,
+    /// Target weekly hours
+    pub target_weekly_hours: Option<u8>,
+    /// Target monthly hours
+    pub target_monthly_hours: Option<u8>,
 }
 
 /// Load all settings
@@ -67,4 +84,17 @@ pub fn app_path(file: &str) -> Option<String> {
 }
 fn settings_path() -> Option<String> {
     app_path(&CONFIG_FILENAME)
+}
+impl Config {
+    /// Get config for project
+    pub fn set_project_configs(mut self, project_configs: ProjectConfigs) {
+        self.project_configs = Some(project_configs)
+    }
+}
+
+impl ProjectConfigs {
+    /// Get config for project
+    pub fn get(&self, project: &Project) -> Option<&ProjectConfig> {
+        self.configs.get(&project.key)
+    }
 }
