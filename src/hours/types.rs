@@ -52,21 +52,18 @@ pub trait TimeEntryCalculations {
     }
 
     fn dates_from_monday(&self) -> Vec<Date<Local>> {
-        let mut dates = Vec::<Date<Local>>::new();
         let current_date = Local::today();
         let monday = NaiveDate::from_isoywd(
             current_date.year(),
             current_date.iso_week().week(),
             Weekday::Mon,
         );
-        for (_, d) in monday
+        monday
             .iter_days()
             .take(current_date.weekday().number_from_monday() as usize)
             .enumerate()
-        {
-            dates.push(Local.from_local_date(&d).unwrap())
-        }
-        return dates;
+            .map(|d| Local.from_local_date(&d.1).unwrap())
+            .collect()
     }
 
     fn current_week_work_days(&self) -> HashSet<Date<Local>> {
