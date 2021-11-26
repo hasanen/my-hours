@@ -9,7 +9,7 @@ use std::collections::HashMap;
 
 /// Show your current monthly progress
 pub fn show_monthly_hours() {
-    let mut config = settings::load();
+    let config = settings::load();
     let mut time_entries = store::load();
 
     if refresh_required(&config) {

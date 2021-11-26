@@ -1,6 +1,6 @@
 //! Print time entries to terminal in table
 use crate::hours::types::{self, TimeEntryCalculations};
-use crate::settings::ProjectConfigs;
+use crate::settings::{ProjectConfig, ProjectConfigs};
 use prettytable::{format, Attr, Cell, Row, Table};
 
 /// Prints given entries to terminal
@@ -31,7 +31,7 @@ pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs
             )),
             Cell::new(&format_weekly_hours(&project)),
             Cell::new(&format_duration(&project.total_hours())),
-            Cell::new(""),
+            Cell::new(&format_targets(project_config)),
         ]));
     }
     table.add_row(Row::new(vec![
@@ -91,5 +91,24 @@ fn format_project_title(project: &types::Project) -> String {
         format!("{} / {}", &project.client.clone().unwrap(), project.title)
     } else {
         project.title.to_string()
+    }
+}
+
+fn format_targets(project_config: &ProjectConfig) -> String {
+    if project_config.is_any_target_set() {
+        format!(
+            "{} / {} / {}",
+            format_target_hour(project_config.target_daily_hours),
+            format_target_hour(project_config.target_weekly_hours),
+            format_target_hour(project_config.target_monthly_hours)
+        )
+    } else {
+        "".to_string()
+    }
+}
+fn format_target_hour(target: Option<u8>) -> String {
+    match target {
+        Some(target) => format!("{}h", target),
+        None => "-".to_string(),
     }
 }

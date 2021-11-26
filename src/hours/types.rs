@@ -1,7 +1,7 @@
 use chrono::{offset::TimeZone, Date, DateTime, Datelike, Duration, Local, NaiveDate, Weekday};
-use digest::{generic_array::GenericArray, Digest};
+use digest::Digest;
 use serde::{Deserialize, Serialize};
-use sha2::{Sha256, Sha512};
+use sha2::Sha256;
 use std::collections::HashSet;
 use std::str;
 

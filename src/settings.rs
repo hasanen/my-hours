@@ -98,3 +98,12 @@ impl ProjectConfigs {
         self.configs.get(&project.key)
     }
 }
+
+impl ProjectConfig {
+    /// Returns true if any of daily, weekly or monthly target is set
+    pub fn is_any_target_set(&self) -> bool {
+        self.target_daily_hours.is_some()
+            || self.target_weekly_hours.is_some()
+            || self.target_monthly_hours.is_some()
+    }
+}
