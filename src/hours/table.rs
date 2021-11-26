@@ -11,9 +11,9 @@ pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs
     table.set_titles(Row::new(vec![
         header_cell(&"Project"),
         header_cell(&"Today"),
-        header_cell(&"Current week (Daily AVG)"),
-        header_cell(&"Current month (Daily AVG)"),
-        header_cell(&"Target (day / week  / month)"),
+        header_cell(&"Current week / Daily AVG"),
+        header_cell(&"Current month / Daily AVG"),
+        header_cell(&"Target (day / week / month)"),
     ]));
     for project in time_entries.uniq_projects() {
         let project_config = project_configs.get(&project).unwrap();
@@ -79,7 +79,7 @@ fn format_weekly_hours(project: &types::Project) -> String {
         "".to_string()
     } else {
         format!(
-            "{} ({})",
+            "{} / {}",
             &format_duration(&weekly_hours),
             &format_duration(&project.daily_avg_for_current_week()),
         )
