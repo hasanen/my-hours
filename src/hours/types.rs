@@ -1,4 +1,4 @@
-use chrono::{DateTime, Duration, Local};
+use chrono::{offset::TimeZone, Date, DateTime, Datelike, Duration, Local, NaiveDate, Weekday};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
@@ -22,12 +22,65 @@ pub trait TimeEntryCalculations {
         return Self::sum(&durations);
     }
 
+    fn total_hours_for_current_week(&self) -> Duration {
+        let dates = self.dates_from_monday();
+        let durations = self
+            .entries()
+            .iter()
+            .filter(|entry| dates.contains(&entry.start.unwrap().date()))
+            .map(|entry| entry.duration())
+            .collect();
+        return Self::sum(&durations);
+    }
+    fn daily_avg_for_current_week(&self) -> Duration {
+        let working_days = self.current_week_work_days().len() as i64;
+        if working_days > 0 {
+            let total_minutes = self.total_hours_for_current_week().num_minutes();
+            let minutes_per_day = total_minutes / working_days;
+            Duration::minutes(minutes_per_day)
+        } else {
+            Duration::minutes(0)
+        }
+    }
+
     fn sum(durations: &Vec<Duration>) -> Duration {
         return durations
             .iter()
             .fold(Duration::minutes(0), |total_dur, entry| {
                 total_dur.checked_add(&entry).unwrap()
             });
+    }
+
+    fn dates_from_monday(&self) -> Vec<Date<Local>> {
+        let mut dates = Vec::<Date<Local>>::new();
+        let current_date = Local::today();
+        let monday = NaiveDate::from_isoywd(
+            current_date.year(),
+            current_date.iso_week().week(),
+            Weekday::Mon,
+        );
+        for (_, d) in monday
+            .iter_days()
+            .take(current_date.weekday().number_from_monday() as usize)
+            .enumerate()
+        {
+            dates.push(Local.from_local_date(&d).unwrap())
+        }
+        return dates;
+    }
+
+    fn current_week_work_days(&self) -> HashSet<Date<Local>> {
+        let dates_from_monday = self.dates_from_monday();
+        let mut working_dates = HashSet::new();
+        for entry in self
+            .entries()
+            .iter()
+            .filter(|entry| dates_from_monday.contains(&entry.start.unwrap().date()))
+        {
+            working_dates.insert(entry.start.unwrap().date());
+        }
+
+        return working_dates;
     }
 }
 
@@ -99,25 +152,4 @@ impl TimeEntryCalculations for Project {
 #[derive(Debug)]
 pub struct CommonHours<'a> {
     pub target_daily_hours: &'a u8,
-    pub monthly_work_days: &'a u8,
-    pub monthly_work_days_used: &'a u8,
-    pub total_hours: &'a Duration,
-}
-
-impl CommonHours<'_> {
-    pub fn work_days_left(&self) -> u8 {
-        if self.monthly_work_days_used >= self.monthly_work_days {
-            0
-        } else {
-            self.monthly_work_days - self.monthly_work_days_used
-        }
-    }
-    //TODO SHould calculate only certain projects
-    pub fn hours_left(&self) -> Duration {
-        let target_hours_in_minutes = self.monthly_work_days * self.target_daily_hours;
-        match Duration::hours(target_hours_in_minutes as i64).checked_sub(&self.total_hours) {
-            Some(duration) => return duration,
-            None => Duration::minutes(0),
-        }
-    }
 }

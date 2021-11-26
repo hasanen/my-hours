@@ -1,4 +1,3 @@
-use crate::hours::types::TimeEntryCalculations;
 use crate::integrations;
 use crate::settings;
 use chrono::Local;
@@ -25,9 +24,6 @@ pub fn show_monthly_hours() {
 
     let common_hours = types::CommonHours {
         target_daily_hours: &config.hours.unwrap(),
-        monthly_work_days: &16,
-        monthly_work_days_used: &17,
-        total_hours: &time_entries.total_hours(),
     };
     table::print(&time_entries, &common_hours);
 }

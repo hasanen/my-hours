@@ -6,9 +6,6 @@ use prettytable::{format, Attr, Cell, Row, Table};
 pub fn print(time_entries: &types::TimeEntries, common_hours: &types::CommonHours) {
     println!("");
     print_hours_table(time_entries, common_hours);
-    println!("");
-    println!("");
-    print_common_table(common_hours);
 }
 
 fn print_hours_table(time_entries: &types::TimeEntries, common_hours: &types::CommonHours) {
@@ -25,7 +22,7 @@ fn print_hours_table(time_entries: &types::TimeEntries, common_hours: &types::Co
         table.add_row(Row::new(vec![
             Cell::new(&project.title),
             Cell::new(&format_duration(&project.total_hours_for_current_day())),
-            Cell::new(""),
+            Cell::new(&format_weekly_hours(&project)),
             Cell::new(&format_duration(&project.total_hours())),
             Cell::new(""),
         ]));
@@ -48,28 +45,7 @@ fn print_hours_table(time_entries: &types::TimeEntries, common_hours: &types::Co
     ]));
     table.printstd();
 }
-fn print_common_table(common_hours: &types::CommonHours) {
-    let mut table = Table::new();
-    let format = format::FormatBuilder::new()
-        .column_separator(' ')
-        .borders(' ')
-        .padding(0, 2)
-        .build();
-    table.set_format(format);
-    table.add_row(Row::new(vec![
-        header_cell(&"Work days left"),
-        Cell::new(&format!(
-            "{} day(s)",
-            common_hours.work_days_left().to_string()
-        ))
-        .style_spec("r"),
-    ]));
-    table.add_row(Row::new(vec![
-        header_cell(&"Hours left"),
-        Cell::new(&format_duration(&common_hours.hours_left())).style_spec("r"),
-    ]));
-    table.printstd();
-}
+
 fn header_cell(title: &str) -> Cell {
     return Cell::new(title).with_style(Attr::Bold);
 }
@@ -89,5 +65,17 @@ fn target_hours_color(target_daily_hours: &i64, duration: &chrono::Duration) -> 
         "Fg".to_string()
     } else {
         "Fy".to_string()
+    }
+}
+fn format_weekly_hours(project: &types::Project) -> String {
+    let weekly_hours = project.total_hours_for_current_week();
+    if weekly_hours.is_zero() {
+        "".to_string()
+    } else {
+        format!(
+            "{} ({})",
+            &format_duration(&weekly_hours),
+            &format_duration(&project.daily_avg_for_current_week()),
+        )
     }
 }
