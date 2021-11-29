@@ -20,7 +20,7 @@ pub fn load() -> types::TimeEntries {
     let hours_str = fs::read_to_string(monthly_hours_path).expect("Couldn't load settings");
     if hours_str.trim().is_empty() {
         types::TimeEntries {
-            entries: Vec::new()
+            entries: Vec::new(),
         }
     } else {
         toml::from_str(&hours_str).unwrap()
