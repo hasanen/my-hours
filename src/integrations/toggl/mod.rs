@@ -13,6 +13,7 @@ pub struct Config {
     key: String,
     pub workspaces: Vec<Workspace>,
 }
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Workspace {
     pub id: usize,

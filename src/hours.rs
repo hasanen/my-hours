@@ -49,6 +49,7 @@ fn refresh_required(config: &settings::Config) -> bool {
         }
     }
 }
+
 fn ensure_and_get_projects_configs(
     config: settings::Config,
     projects_from_entries: &Vec<types::Project>,

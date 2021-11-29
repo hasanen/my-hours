@@ -29,7 +29,6 @@ enum Subcommand {
     /// Refresh hours through integrations
     Refresh,
 }
-
 fn main() {
     let args = Arguments::from_args();
     match &args.subcommand {

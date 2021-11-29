@@ -150,6 +150,7 @@ pub struct Project {
     pub key: String,
     pub entries: Vec<TimeEntry>,
 }
+
 impl TimeEntryCalculations for Project {
     fn entries(&self) -> &Vec<TimeEntry> {
         return &self.entries;

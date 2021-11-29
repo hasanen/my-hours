@@ -23,12 +23,14 @@ pub struct Config {
     /// Settings for projects
     pub project_configs: Option<ProjectConfigs>,
 }
+
 /// Configs for the projects
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProjectConfigs {
     /// Existing configs
     pub configs: HashMap<String, ProjectConfig>,
 }
+
 /// Single config project
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProjectConfig {
@@ -46,12 +48,14 @@ pub fn load() -> Config {
     let settings_str = fs::read_to_string(settings_path).expect("Couldn't load settings");
     return toml::from_str(&settings_str).unwrap();
 }
+
 /// Store config to filestystem
 pub fn save(config: &Config) -> Result<(), std::io::Error> {
     let settings_path = settings_path().expect(&format!("Failed to locate {}", CONFIG_FILENAME));
     let toml = toml::to_string(&config).unwrap();
     return fs::write(settings_path, toml);
 }
+
 /// Mark hours as refreshed
 pub fn hours_refreshed() {
     let mut settings = load();
@@ -85,6 +89,7 @@ pub fn app_path(file: &str) -> Option<String> {
 fn settings_path() -> Option<String> {
     app_path(&CONFIG_FILENAME)
 }
+
 impl Config {
     /// Get config for project
     pub fn set_project_configs(mut self, project_configs: ProjectConfigs) {

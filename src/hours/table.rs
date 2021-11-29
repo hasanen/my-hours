@@ -49,6 +49,7 @@ pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs
 fn header_cell(title: &str) -> Cell {
     return Cell::new(title).with_style(Attr::Bold);
 }
+
 fn format_duration(duration: &chrono::Duration) -> String {
     if duration.num_minutes() > 0 {
         let hours = duration.num_hours();
@@ -58,6 +59,7 @@ fn format_duration(duration: &chrono::Duration) -> String {
         "".to_string()
     }
 }
+
 fn target_hours_color(target_hours: &Option<u8>, duration: &chrono::Duration) -> String {
     if target_hours.is_some() {
         let hours_as_i64 = target_hours.unwrap() as i64;
@@ -72,6 +74,7 @@ fn target_hours_color(target_hours: &Option<u8>, duration: &chrono::Duration) ->
         "".to_string()
     }
 }
+
 fn format_weekly_hours(project: &types::Project) -> String {
     let weekly_hours = project.total_hours_for_current_week();
     if weekly_hours.is_zero() {
@@ -105,6 +108,7 @@ fn format_targets(project_config: &ProjectConfig) -> String {
         "".to_string()
     }
 }
+
 fn format_target_hour(target: Option<u8>) -> String {
     match target {
         Some(target) => format!("{}h", target),
