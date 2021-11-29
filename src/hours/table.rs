@@ -19,16 +19,15 @@ pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs
         let project_config = project_configs.get(&project).unwrap();
         table.add_row(Row::new(vec![
             Cell::new(&format_project_title(&project)),
-            Cell::new(&format_duration(
-                &time_entries.total_hours_for_current_day(),
-            ))
-            .style_spec(&format!(
-                "b{}",
-                target_hours_color(
-                    &project_config.target_daily_hours,
-                    &time_entries.total_hours_for_current_day()
-                )
-            )),
+            Cell::new(&format_duration(&project.total_hours_for_current_day())).style_spec(
+                &format!(
+                    "b{}",
+                    target_hours_color(
+                        &project_config.target_daily_hours,
+                        &time_entries.total_hours_for_current_day()
+                    )
+                ),
+            ),
             Cell::new(&format_weekly_hours(&project)),
             Cell::new(&format_duration(&project.total_hours())),
             Cell::new(&format_targets(project_config)),
