@@ -35,10 +35,22 @@ pub trait TimeEntryCalculations {
             .collect();
         return Self::sum(&durations);
     }
+
     fn daily_avg_for_current_week(&self) -> Duration {
         let working_days = self.current_week_work_days().len() as i64;
         if working_days > 0 {
             let total_minutes = self.total_hours_for_current_week().num_minutes();
+            let minutes_per_day = total_minutes / working_days;
+            Duration::minutes(minutes_per_day)
+        } else {
+            Duration::minutes(0)
+        }
+    }
+
+    fn daily_avg_for_current_month(&self) -> Duration {
+        let working_days = self.current_month_work_days().len() as i64;
+        if working_days > 0 {
+            let total_minutes = self.total_hours().num_minutes();
             let minutes_per_day = total_minutes / working_days;
             Duration::minutes(minutes_per_day)
         } else {
@@ -77,6 +89,15 @@ pub trait TimeEntryCalculations {
             .iter()
             .filter(|entry| dates_from_monday.contains(&entry.start.unwrap().date()))
         {
+            working_dates.insert(entry.start.unwrap().date());
+        }
+
+        return working_dates;
+    }
+
+    fn current_month_work_days(&self) -> HashSet<Date<Local>> {
+        let mut working_dates = HashSet::new();
+        for entry in self.entries().iter() {
             working_dates.insert(entry.start.unwrap().date());
         }
 

@@ -29,7 +29,7 @@ pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs
                 ),
             ),
             Cell::new(&format_weekly_hours(&project)),
-            Cell::new(&format_duration(&project.total_hours())),
+            Cell::new(&format_monthly_hours(&project)),
             Cell::new(&format_targets(project_config)),
         ]));
     }
@@ -84,6 +84,18 @@ fn format_weekly_hours(project: &types::Project) -> String {
             "{} / {}",
             &format_duration(&weekly_hours),
             &format_duration(&project.daily_avg_for_current_week()),
+        )
+    }
+}
+fn format_monthly_hours(project: &types::Project) -> String {
+    let monthly_hours = project.total_hours();
+    if monthly_hours.is_zero() {
+        "".to_string()
+    } else {
+        format!(
+            "{} / {}",
+            &format_duration(&monthly_hours),
+            &format_duration(&project.daily_avg_for_current_month()),
         )
     }
 }
