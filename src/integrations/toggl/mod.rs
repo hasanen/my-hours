@@ -57,7 +57,11 @@ pub fn time_entries_for_month(config: &Config, date: Date<Local>) -> Vec<hours::
     let year = date.year();
     let month = date.month();
     let start_date = NaiveDate::from_ymd(year, month, 1);
-    let end_date = NaiveDate::from_ymd(year, month + 1, 1).pred();
+    let end_date = if month == 12 {
+        NaiveDate::from_ymd(year + 1, 1, 1).pred()
+    } else {
+        NaiveDate::from_ymd(year, month, 1).pred()
+    };
 
     let time_entries: Vec<Vec<api::types::TimeEntry>> = workspace_ids
         .iter()
