@@ -58,7 +58,11 @@ pub fn time_entries_for_month(config: &Config, date: Date<Local>) -> Vec<hours::
     let month = date.month();
     let start_date = NaiveDate::from_ymd(year, month, 1);
     let end_date = if month == 12 {
+        //TODO: add test to cover current day in december
         NaiveDate::from_ymd(year + 1, 1, 1).pred()
+    } else if month == 1 {
+        //TODO: add test to cover current day in january
+        NaiveDate::from_ymd(year, 2, 1).pred()
     } else {
         NaiveDate::from_ymd(year, month, 1).pred()
     };
