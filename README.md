@@ -1,5 +1,7 @@
 # My Hours
 
+![build & test](https://github.com/hasanen/my-hours/actions/workflows/rust.yml/badge.svg)
+
 Goal of the project is to create command line app to combine tracked hours in tracking services and provide easy way to see if the monthly goal will be met or not.
 
 ## New projects
