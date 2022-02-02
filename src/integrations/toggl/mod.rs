@@ -4,7 +4,7 @@
 
 use crate::hours::{self, ui};
 use crate::settings;
-use chrono::{offset::TimeZone, Date, Datelike, Local, NaiveDate};
+use chrono::{Date, Local};
 use serde::{Deserialize, Serialize};
 mod api;
 
@@ -52,30 +52,17 @@ pub fn setup() {
     }
 }
 
-pub fn time_entries_for_month(config: &Config, date: Date<Local>) -> Vec<hours::types::TimeEntry> {
+pub fn time_entries_for_dates(
+    config: &Config,
+    start_date: &Date<Local>,
+    end_date: &Date<Local>,
+) -> Vec<hours::types::TimeEntry> {
     let workspace_ids: Vec<usize> = config.workspaces.iter().map(|w| w.id).collect();
-    let year = date.year();
-    let month = date.month();
-    let start_date = NaiveDate::from_ymd(year, month, 1);
-    let end_date = if month == 12 {
-        //TODO: add test to cover current day in december
-        NaiveDate::from_ymd(year + 1, 1, 1).pred()
-    } else if month == 1 {
-        //TODO: add test to cover current day in january
-        NaiveDate::from_ymd(year, 2, 1).pred()
-    } else {
-        NaiveDate::from_ymd(year, month, 1).pred()
-    };
 
     let time_entries: Vec<Vec<api::types::TimeEntry>> = workspace_ids
         .iter()
         .map(|workspace_id| {
-            return api::get_time_entries(
-                workspace_id,
-                &Local.from_local_date(&start_date).unwrap(),
-                &Local.from_local_date(&end_date).unwrap(),
-                &config.key,
-            );
+            return api::get_time_entries(workspace_id, start_date, end_date, &config.key);
         })
         .collect();
 

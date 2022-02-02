@@ -1,3 +1,4 @@
+use crate::dates;
 use crate::hours::types::{TimeEntries, TimeEntry};
 use crate::settings;
 use chrono::Local;
@@ -32,12 +33,14 @@ pub fn execute(action: &Action) {
 /// Loop over integrations and get time entries for current month
 pub fn get_monthly_time_entries() -> TimeEntries {
     let settings = settings::load();
+    let (start_date, end_date) = dates::month_first_and_last_dates(&Local::today());
 
     let entries: Vec<Vec<TimeEntry>> = match settings.toggl {
         Some(toggl) => toggl
             .iter()
             .map(|toggl_config| {
-                let toggl_entries = toggl::time_entries_for_month(toggl_config, Local::today());
+                let toggl_entries =
+                    toggl::time_entries_for_dates(toggl_config, &start_date, &end_date);
                 return toggl_entries;
             })
             .collect(),

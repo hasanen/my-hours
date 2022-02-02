@@ -5,6 +5,7 @@
 
 #![deny(missing_docs)]
 use structopt::StructOpt;
+pub mod dates;
 mod hours;
 mod integrations;
 pub mod settings;
