@@ -23,8 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: docker://lpenz/ghaction-rust-coverage:0.5.0
-      - uses: coverallsapp/github-action@v1.1.2
         with:
           dependencies_debian: pkg-config
+      - uses: coverallsapp/github-action@v1.1.2
+        with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./lcov.info
