@@ -25,6 +25,7 @@ jobs:
       - uses: docker://lpenz/ghaction-rust-coverage:latest
         with:
           dependencies_debian: pkg-config libssl-dev
+          test_args: --bin
       - uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
