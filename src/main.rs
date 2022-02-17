@@ -37,9 +37,3 @@ fn main() {
         None => hours::show_monthly_hours(),
     }
 }
-
-#[test]
-fn verify_app() {
-    use clap::IntoApp;
-    Args::into_app().debug_assert()
-}
