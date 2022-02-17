@@ -4,37 +4,42 @@
 //!   - Toggl track - <https://track.toggl.com>
 
 #![deny(missing_docs)]
-use structopt::StructOpt;
+use clap::{Parser};
 pub mod dates;
 mod hours;
 mod integrations;
 pub mod settings;
 
-#[derive(StructOpt, Debug)]
+#[derive(Parser, Debug)]
 #[structopt(name = "My hours")]
-struct Arguments {
+struct Cli {
     /// Command to use: hours, integrations etc
-    #[structopt(subcommand)]
-    subcommand: Option<Subcommand>,
+    #[clap(subcommand)]
+    command: Option<Command>,
 }
 
-#[derive(StructOpt, Debug)]
-enum Subcommand {
-    #[structopt(name = "integrations")]
+#[derive(Parser, Debug)]
+enum Command {
+    #[clap(name = "integrations")]
     /// Manage integrations
     IntegrationsCommand {
-        #[structopt(subcommand)]
+        #[clap(subcommand)]
         action: integrations::Action,
     },
-    #[structopt(name = "refresh")]
     /// Refresh hours through integrations
     Refresh,
 }
 fn main() {
-    let args = Arguments::from_args();
-    match &args.subcommand {
-        Some(Subcommand::IntegrationsCommand { action }) => integrations::execute(action),
+    let args = Cli::parse();
+    match &args.command {
+        Some(Command::IntegrationsCommand { action }) => integrations::execute(action),
         Some(_refresh) => hours::refresh_all(),
         None => hours::show_monthly_hours(),
     }
+}
+
+#[test]
+fn verify_app() {
+    use clap::IntoApp;
+    Args::into_app().debug_assert()
 }

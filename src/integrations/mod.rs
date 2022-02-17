@@ -2,23 +2,22 @@ use crate::dates;
 use crate::hours::types::{TimeEntries, TimeEntry};
 use crate::settings;
 use chrono::Local;
-use structopt::StructOpt;
+use clap::{Parser};
 
 pub mod toggl;
 
-#[derive(StructOpt, Debug)]
+#[derive(Parser, Debug)]
 pub enum Action {
-    #[structopt(name = "setup")]
     /// Setup new integration
     Setup {
-        #[structopt(subcommand)]
+        #[clap(subcommand)]
         integration: Integration,
     },
 }
 
-#[derive(StructOpt, Debug, Clone)]
+#[derive(Parser, Debug, Clone)]
 pub enum Integration {
-    #[structopt(name = "toggl")]
+    #[clap(name = "toggl")]
     TogglIntegration,
 }
 
