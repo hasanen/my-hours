@@ -30,28 +30,28 @@ mod tests {
                 .unwrap();
             let (start_date, end_date) = month_first_and_last_dates(&wednesday);
 
-            assert_eq!(start_date.naive_local(), NaiveDate::from_ymd(2022, 01, 01));
-            assert_eq!(end_date.naive_local(), NaiveDate::from_ymd(2022, 01, 31));
+            assert_eq!(start_date.naive_local(), NaiveDate::from_ymd(2022, 1, 1));
+            assert_eq!(end_date.naive_local(), NaiveDate::from_ymd(2022, 1, 31));
         }
         #[test]
         fn last_day_in_middle_of_week() {
             let monday = Local
-                .from_local_date(&NaiveDate::from_ymd(2022, 01, 31))
+                .from_local_date(&NaiveDate::from_ymd(2022, 1, 31))
                 .unwrap();
             let (start_date, end_date) = month_first_and_last_dates(&monday);
 
-            assert_eq!(start_date.naive_local(), NaiveDate::from_ymd(2022, 01, 01));
-            assert_eq!(end_date.naive_local(), NaiveDate::from_ymd(2022, 01, 31));
+            assert_eq!(start_date.naive_local(), NaiveDate::from_ymd(2022, 1, 1));
+            assert_eq!(end_date.naive_local(), NaiveDate::from_ymd(2022, 1, 31));
         }
         #[test]
         fn first_day_in_middle_of_week() {
             let tuesday = Local
-                .from_local_date(&NaiveDate::from_ymd(2022, 02, 01))
+                .from_local_date(&NaiveDate::from_ymd(2022, 2, 1))
                 .unwrap();
             let (start_date, end_date) = month_first_and_last_dates(&tuesday);
 
-            assert_eq!(start_date.naive_local(), NaiveDate::from_ymd(2022, 02, 01));
-            assert_eq!(end_date.naive_local(), NaiveDate::from_ymd(2022, 02, 28));
+            assert_eq!(start_date.naive_local(), NaiveDate::from_ymd(2022, 2, 1));
+            assert_eq!(end_date.naive_local(), NaiveDate::from_ymd(2022, 2, 28));
         }
         #[test]
         fn given_day_in_december() {
@@ -60,7 +60,7 @@ mod tests {
                 .unwrap();
             let (start_date, end_date) = month_first_and_last_dates(&tuesday);
 
-            assert_eq!(start_date.naive_local(), NaiveDate::from_ymd(2021, 12, 01));
+            assert_eq!(start_date.naive_local(), NaiveDate::from_ymd(2021, 12, 1));
             assert_eq!(end_date.naive_local(), NaiveDate::from_ymd(2021, 12, 31));
         }
     }

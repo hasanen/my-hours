@@ -5,15 +5,15 @@ use prettytable::{format, Attr, Cell, Row, Table};
 
 /// Prints given entries to terminal
 pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs) {
-    println!("");
+    println!();
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
     table.set_titles(Row::new(vec![
-        header_cell(&"Project"),
-        header_cell(&"Today"),
-        header_cell(&"Current week / Daily AVG"),
-        header_cell(&"Current month / Daily AVG"),
-        header_cell(&"Target (day / week / month)"),
+        header_cell("Project"),
+        header_cell("Today"),
+        header_cell("Current week / Daily AVG"),
+        header_cell("Current month / Daily AVG"),
+        header_cell("Target (day / week / month)"),
     ]));
     for project in time_entries.uniq_projects() {
         let project_config = project_configs.get(&project).unwrap();
@@ -47,7 +47,7 @@ pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs
 }
 
 fn header_cell(title: &str) -> Cell {
-    return Cell::new(title).with_style(Attr::Bold);
+    Cell::new(title).with_style(Attr::Bold)
 }
 
 fn format_duration(duration: &chrono::Duration) -> String {
@@ -65,7 +65,7 @@ fn target_hours_color(target_hours: &Option<u8>, duration: &chrono::Duration) ->
         let hours_as_i64 = target_hours.unwrap() as i64;
         if &hours_as_i64 - 1 > duration.num_hours() {
             "Fr".to_string()
-        } else if &hours_as_i64 < &duration.num_hours() {
+        } else if hours_as_i64 < duration.num_hours() {
             "Fg".to_string()
         } else {
             "Fy".to_string()

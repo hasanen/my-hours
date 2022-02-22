@@ -8,32 +8,32 @@ use std::str;
 pub trait TimeEntryCalculations {
     fn entries(&self) -> &Vec<TimeEntry>;
     fn total_hours(&self) -> Duration {
-        let durations = self
+        let durations: Vec<Duration> = self
             .entries()
             .iter()
             .map(|entry| entry.duration())
             .collect();
-        return Self::sum(&durations);
+        Self::sum(&durations)
     }
     fn total_hours_for_current_day(&self) -> Duration {
-        let durations = self
+        let durations: Vec<Duration> = self
             .entries()
             .iter()
             .filter(|entry| entry.is_for_current_date())
             .map(|entry| entry.duration())
             .collect();
-        return Self::sum(&durations);
+        Self::sum(&durations)
     }
 
     fn total_hours_for_current_week(&self) -> Duration {
         let dates = self.dates_from_monday();
-        let durations = self
+        let durations: Vec<Duration> = self
             .entries()
             .iter()
             .filter(|entry| dates.contains(&entry.start.unwrap().date()))
             .map(|entry| entry.duration())
             .collect();
-        return Self::sum(&durations);
+        Self::sum(&durations)
     }
 
     fn daily_avg_for_current_week(&self) -> Duration {
@@ -58,11 +58,11 @@ pub trait TimeEntryCalculations {
         }
     }
 
-    fn sum(durations: &Vec<Duration>) -> Duration {
+    fn sum(durations: &[Duration]) -> Duration {
         return durations
             .iter()
             .fold(Duration::minutes(0), |total_dur, entry| {
-                total_dur.checked_add(&entry).unwrap()
+                total_dur.checked_add(entry).unwrap()
             });
     }
 
@@ -92,7 +92,7 @@ pub trait TimeEntryCalculations {
             working_dates.insert(entry.start.unwrap().date());
         }
 
-        return working_dates;
+        working_dates
     }
 
     fn current_month_work_days(&self) -> HashSet<Date<Local>> {
@@ -101,7 +101,7 @@ pub trait TimeEntryCalculations {
             working_dates.insert(entry.start.unwrap().date());
         }
 
-        return working_dates;
+        working_dates
     }
 }
 
@@ -117,10 +117,10 @@ pub struct TimeEntry {
 
 impl TimeEntry {
     pub fn duration(&self) -> Duration {
-        return self.end.unwrap().signed_duration_since(self.start.unwrap());
+        self.end.unwrap().signed_duration_since(self.start.unwrap())
     }
     pub fn is_for_current_date(&self) -> bool {
-        return self.start.unwrap().date() == Local::today();
+        self.start.unwrap().date() == Local::today()
     }
 }
 
@@ -130,7 +130,7 @@ pub struct TimeEntries {
 }
 impl TimeEntryCalculations for TimeEntries {
     fn entries(&self) -> &Vec<TimeEntry> {
-        return &self.entries;
+        &self.entries
     }
 }
 impl TimeEntries {
@@ -149,9 +149,9 @@ impl TimeEntries {
             };
             projects.insert(project);
         }
-        let mut projects_as_vec: Vec<Project> = projects.iter().map(|a| a.clone()).collect();
+        let mut projects_as_vec: Vec<Project> = projects.iter().cloned().collect();
         projects_as_vec.sort_by(|a, b| a.title.partial_cmp(&b.title).unwrap());
-        return projects_as_vec;
+        projects_as_vec
     }
 
     fn entries_for_project(&self, project_title: &str) -> Vec<TimeEntry> {
@@ -174,7 +174,7 @@ pub struct Project {
 
 impl TimeEntryCalculations for Project {
     fn entries(&self) -> &Vec<TimeEntry> {
-        return &self.entries;
+        &self.entries
     }
 }
 

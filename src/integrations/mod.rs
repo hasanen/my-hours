@@ -38,17 +38,16 @@ pub fn get_monthly_time_entries() -> TimeEntries {
         Some(toggl) => toggl
             .iter()
             .map(|toggl_config| {
-                let toggl_entries =
-                    toggl::time_entries_for_dates(toggl_config, &start_date, &end_date);
-                return toggl_entries;
+                
+                toggl::time_entries_for_dates(toggl_config, &start_date, &end_date)
             })
             .collect(),
         None => Vec::new(),
     };
 
-    let time_entries = TimeEntries {
-        entries: entries.concat(),
-    };
+    
 
-    return time_entries;
+    TimeEntries {
+        entries: entries.concat(),
+    }
 }

@@ -32,7 +32,7 @@ fn refresh_hours() -> types::TimeEntries {
         Err(err) => println!("Error occured during refreshing hours: {}", err),
     }
     settings::hours_refreshed();
-    return time_entries;
+    time_entries
 }
 
 fn refresh_required(config: &settings::Config) -> bool {
@@ -42,17 +42,16 @@ fn refresh_required(config: &settings::Config) -> bool {
         Some(minutes) => treshold_minutes = minutes,
     }
     match config.refreshed_at {
-        None => return true,
+        None => true,
         Some(timestamp) => {
-            return Local::now().signed_duration_since(timestamp).num_minutes()
-                >= treshold_minutes as i64;
+            Local::now().signed_duration_since(timestamp).num_minutes() >= treshold_minutes as i64
         }
     }
 }
 
 fn ensure_and_get_projects_configs(
     config: settings::Config,
-    projects_from_entries: &Vec<types::Project>,
+    projects_from_entries: &[types::Project],
 ) -> settings::ProjectConfigs {
     let mut config_changed = false;
     let mut project_configs = match &config.project_configs {
@@ -62,7 +61,7 @@ fn ensure_and_get_projects_configs(
         },
     };
     for project in projects_from_entries {
-        let project_config = project_configs.get(&project);
+        let project_config = project_configs.get(project);
         if project_config.is_none() {
             let target_daily_hours = ask_target(&format!(
                 "What is your target daily hours for {}?",
@@ -77,9 +76,9 @@ fn ensure_and_get_projects_configs(
                 project.title
             ));
             let new_config = settings::ProjectConfig {
-                target_daily_hours: target_daily_hours,
-                target_weekly_hours: target_weekly_hours,
-                target_monthly_hours: target_monthly_hours,
+                target_daily_hours,
+                target_weekly_hours,
+                target_monthly_hours,
             };
             config_changed = true;
             project_configs
@@ -90,7 +89,7 @@ fn ensure_and_get_projects_configs(
     if config_changed {
         let updated_config = settings::Config {
             project_configs: Some(project_configs.clone()),
-            ..config.clone()
+            ..config
         };
         match settings::save(&updated_config) {
             Ok(_) => println!("New project configs saved"),
@@ -101,7 +100,7 @@ fn ensure_and_get_projects_configs(
 }
 
 fn ask_target(question: &str) -> Option<u8> {
-    match ui::ask_input::<u8>(&question) {
+    match ui::ask_input::<u8>(question) {
         num if num > 0 => Some(num),
         _ => None,
     }

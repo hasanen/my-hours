@@ -10,7 +10,7 @@ static DATE_FORMAT: &str = "%Y-%m-%d";
 #[tokio::main]
 /// Get all workspaces where user has access to
 pub async fn get_workspaces(api_key: &str) -> Vec<types::Workspace> {
-    let workspaces: Vec<types::Workspace> = get(&"api/v8/workspaces", api_key, &None)
+    let workspaces: Vec<types::Workspace> = get("api/v8/workspaces", api_key, &None)
         .await
         .unwrap()
         .json()
@@ -36,7 +36,7 @@ pub async fn get_time_entries(
     while items_left {
         let params = time_entries_params(workspace_id, start_date, end_date, &page);
         let time_entry_response: types::TimeEntryResponse =
-            get(&"reports/api/v2/details", api_key, &params)
+            get("reports/api/v2/details", api_key, &params)
                 .await
                 .unwrap()
                 .json()
@@ -59,7 +59,7 @@ async fn get(
     api_key: &str,
     params: &Option<HashMap<String, String>>,
 ) -> Result<reqwest::Response, reqwest::Error> {
-    let request_url = api_url(&path);
+    let request_url = api_url(path);
     let mut request = reqwest::Client::new()
         .get(request_url)
         .basic_auth(api_key, Some(API_BASIC_AUTH_PW));
@@ -74,7 +74,7 @@ async fn get(
 }
 
 fn api_url(path: &str) -> String {
-    String::from(format!("{}/{}", API_URL, path))
+    format!("{}/{}", API_URL, path)
 }
 
 fn check_status(response: &reqwest::Response) {
@@ -117,5 +117,5 @@ fn time_entries_params(
     .cloned()
     .collect();
 
-    return Some(params);
+    Some(params)
 }
