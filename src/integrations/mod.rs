@@ -1,8 +1,9 @@
 use crate::dates;
 use crate::hours::types::{TimeEntries, TimeEntry};
+use crate::integrations::toggl::Config as TogglConfig;
 use crate::settings;
 use chrono::Local;
-use clap::{Parser};
+use clap::Parser;
 
 pub mod toggl;
 
@@ -13,6 +14,8 @@ pub enum Action {
         #[clap(subcommand)]
         integration: Integration,
     },
+    /// List enable integrations
+    List,
 }
 
 #[derive(Parser, Debug, Clone)]
@@ -26,6 +29,10 @@ pub fn execute(action: &Action) {
         Action::Setup { integration } => match integration {
             Integration::TogglIntegration => toggl::setup(),
         },
+        Action::List => {
+            let settings = settings::load();
+            list_integrations(&settings, &mut std::io::stdout())
+        }
     }
 }
 
@@ -37,17 +44,84 @@ pub fn get_monthly_time_entries() -> TimeEntries {
     let entries: Vec<Vec<TimeEntry>> = match settings.toggl {
         Some(toggl) => toggl
             .iter()
-            .map(|toggl_config| {
-                
-                toggl::time_entries_for_dates(toggl_config, &start_date, &end_date)
-            })
+            .map(|toggl_config| toggl::time_entries_for_dates(toggl_config, &start_date, &end_date))
             .collect(),
         None => Vec::new(),
     };
 
-    
-
     TimeEntries {
         entries: entries.concat(),
+    }
+}
+
+/// List integrations to given writer
+pub fn list_integrations(config: &settings::Config, mut writer: impl std::io::Write) {
+    match &config.toggl {
+        Some(toggl) => {
+            writeln!(writer, "Enabled integrations:").unwrap();
+            writeln!(writer).unwrap();
+            list_toggl_integrations(&toggl, &mut writer);
+        }
+        None => {
+            writeln!(writer, "No integrations set up yet.").unwrap();
+        }
+    }
+}
+
+fn list_toggl_integrations(toggl: &[TogglConfig], mut writer: impl std::io::Write) {
+    for t in toggl.iter() {
+        let workspace_names: Vec<String> =
+            t.workspaces.iter().map(|ws| ws.name.to_string()).collect();
+        writeln!(writer, "Toggl, workspaces: {}", workspace_names.join(", ")).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    mod show_integrations {
+        use super::super::*;
+        use crate::integrations;
+
+        static DEFAULT_CONFIG: settings::Config = settings::Config {
+            refresh_treshold: Some(180),
+            refreshed_at: None,
+            project_configs: None,
+            toggl: None,
+        };
+        #[test]
+        fn no_integrations_shows_notification() {
+            let mut result = Vec::new();
+
+            list_integrations(&DEFAULT_CONFIG, &mut result);
+
+            assert_eq!(result, b"No integrations set up yet.\n");
+        }
+        #[test]
+        fn toggl_integration_shows_workspaces() {
+            let mut result = Vec::new();
+            let config = settings::Config {
+                toggl: Some(
+                    [TogglConfig {
+                        key: "key".to_string(),
+                        workspaces: [integrations::toggl::Workspace {
+                            id: 1,
+                            name: "Test".to_string(),
+                        }]
+                        .to_vec(),
+                    }]
+                    .to_vec(),
+                ),
+                refresh_treshold: Some(180),
+                refreshed_at: None,
+                project_configs: None,
+            };
+
+            list_integrations(&config, &mut result);
+
+            assert_eq!(
+                result,
+                b"Enabled integrations:\n\nToggl, workspaces: Test\n"
+            );
+        }
     }
 }

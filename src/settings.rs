@@ -51,7 +51,8 @@ pub fn load() -> Config {
 
 /// Store config to filestystem
 pub fn save(config: &Config) -> Result<(), std::io::Error> {
-    let settings_path = settings_path().unwrap_or_else(|| panic!("Failed to locate {}", CONFIG_FILENAME));
+    let settings_path =
+        settings_path().unwrap_or_else(|| panic!("Failed to locate {}", CONFIG_FILENAME));
     let toml = toml::to_string(&config).unwrap();
     fs::write(settings_path, toml)
 }
@@ -77,8 +78,8 @@ pub fn app_path(file: &str) -> Option<String> {
         let folder = proj_dirs.config_dir().to_str().unwrap();
         let settings_file_path = format!("{}/{}", String::from_str(folder).unwrap(), file);
         if !Path::new(&settings_file_path).exists() {
-            File::create(&settings_file_path).unwrap_or_else(|_| panic!("Couldn't create settings file {}",
-                settings_file_path));
+            File::create(&settings_file_path)
+                .unwrap_or_else(|_| panic!("Couldn't create settings file {}", settings_file_path));
         }
         return Some(settings_file_path);
     };
