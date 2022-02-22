@@ -60,7 +60,7 @@ pub fn list_integrations(config: &settings::Config, mut writer: impl std::io::Wr
         Some(toggl) => {
             writeln!(writer, "Enabled integrations:").unwrap();
             writeln!(writer).unwrap();
-            list_toggl_integrations(&toggl, &mut writer);
+            list_toggl_integrations(toggl, &mut writer);
         }
         None => {
             writeln!(writer, "No integrations set up yet.").unwrap();
