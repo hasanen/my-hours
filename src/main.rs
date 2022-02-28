@@ -4,7 +4,7 @@
 //!   - Toggl track - <https://track.toggl.com>
 
 #![deny(missing_docs)]
-use clap::{Parser};
+use clap::Parser;
 pub mod dates;
 mod hours;
 mod integrations;
@@ -16,6 +16,9 @@ struct Cli {
     /// Command to use: hours, integrations etc
     #[clap(subcommand)]
     command: Option<Command>,
+    /// Refresh hours
+    #[clap(long)]
+    refresh: bool,
 }
 
 #[derive(Parser, Debug)]
@@ -34,6 +37,11 @@ fn main() {
     match &args.command {
         Some(Command::IntegrationsCommand { action }) => integrations::execute(action),
         Some(_refresh) => hours::refresh_all(),
-        None => hours::show_monthly_hours(),
+        None => {
+            if args.refresh {
+                hours::refresh_all()
+            }
+            hours::show_monthly_hours()
+        }
     }
 }
