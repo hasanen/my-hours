@@ -16,7 +16,7 @@ struct Cli {
     /// Command to use: hours, integrations etc
     #[clap(subcommand)]
     command: Option<Command>,
-    /// Refresh hours
+    /// Refresh hours from integrations before printing them
     #[clap(long)]
     refresh: bool,
 }
