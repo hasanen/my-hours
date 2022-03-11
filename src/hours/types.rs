@@ -139,7 +139,7 @@ impl TimeEntries {
 
         for entry in self.entries.iter() {
             let mut hasher = Sha256::default();
-            hasher.update(entry.project.to_string());
+            hasher.update(&entry.project);
             let finalized_hash = format!("{:x}", &hasher.finalize());
             let project = Project {
                 title: entry.project.to_string(),

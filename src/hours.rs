@@ -36,11 +36,10 @@ fn refresh_hours() -> types::TimeEntries {
 }
 
 fn refresh_required(config: &settings::Config) -> bool {
-    let treshold_minutes;
-    match config.refresh_treshold {
+    let treshold_minutes = match config.refresh_treshold {
         None => return true,
-        Some(minutes) => treshold_minutes = minutes,
-    }
+        Some(minutes) => minutes,
+    };
     match config.refreshed_at {
         None => true,
         Some(timestamp) => {
