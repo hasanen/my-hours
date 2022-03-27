@@ -100,7 +100,7 @@ fn ensure_and_get_projects_configs(
 
 fn ask_target(question: &str) -> Option<u8> {
     match ui::ask_input::<u8>(question) {
-        num if num > 0 => Some(num),
+        Some(num) if num > 0 => Some(num),
         _ => None,
     }
 }
