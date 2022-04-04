@@ -85,7 +85,8 @@ pub fn app_path(file: &str) -> Option<String> {
     };
     None
 }
-fn settings_path() -> Option<String> {
+/// Path for settings
+pub fn settings_path() -> Option<String> {
     app_path(CONFIG_FILENAME)
 }
 

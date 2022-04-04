@@ -25,6 +25,11 @@ pub fn refresh_all() {
     refresh_hours();
 }
 
+/// Print some basic info
+pub fn print_info() {
+    println!("Settings folder: {}", settings::settings_path().unwrap())
+}
+
 fn refresh_hours() -> types::TimeEntries {
     let time_entries = integrations::get_monthly_time_entries();
     match store::save(&time_entries) {

@@ -31,12 +31,15 @@ enum Command {
     },
     /// Refresh hours through integrations
     Refresh,
+    /// Show some basic info
+    Info,
 }
 fn main() {
     let args = Cli::parse();
     match &args.command {
         Some(Command::IntegrationsCommand { action }) => integrations::execute(action),
-        Some(_refresh) => hours::refresh_all(),
+        Some(Command::Info) => hours::print_info(),
+        Some(Command::Refresh) => hours::refresh_all(),
         None => {
             if args.refresh {
                 hours::refresh_all()
