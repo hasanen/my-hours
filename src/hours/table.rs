@@ -65,7 +65,7 @@ fn target_hours_color(target_hours: &Option<u8>, duration: &chrono::Duration) ->
         let hours_as_i64 = target_hours.unwrap() as i64;
         if &hours_as_i64 - 1 > duration.num_hours() {
             "Fr".to_string()
-        } else if hours_as_i64 < duration.num_hours() {
+        } else if hours_as_i64 <= duration.num_hours() {
             "Fg".to_string()
         } else {
             "Fy".to_string()
