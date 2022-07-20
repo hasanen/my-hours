@@ -125,6 +125,6 @@ fn format_targets(project_config: &ProjectConfig) -> String {
 
 fn format_target_hour(target: Option<u8>) -> String {
     target
-        .map(|t| format!("{}h", t))
-        .unwrap_or_else(|| "".to_string())
+        .map(|hours| format!("{hours}h"))
+        .unwrap_or_else(|| "-".to_string())
 }
