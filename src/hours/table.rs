@@ -1,53 +1,54 @@
 //! Print time entries to terminal in table
 use crate::hours::types::{self, TimeEntryCalculations};
 use crate::settings::{ProjectConfig, ProjectConfigs};
-use prettytable::{format, Attr, Cell, Row, Table};
+use chrono::Duration;
+use comfy_table::{presets::ASCII_NO_BORDERS, Attribute, Cell, Color, Table};
 
 /// Prints given entries to terminal
 pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs) {
     println!();
     let mut table = Table::new();
-    table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
-    table.set_titles(Row::new(vec![
+    table.load_preset(ASCII_NO_BORDERS).set_header(vec![
         header_cell("Project"),
         header_cell("Today"),
         header_cell("Current week / Daily AVG"),
         header_cell("Current month / Daily AVG"),
         header_cell("Target (day / week / month)"),
-    ]));
+    ]);
+
+    let total_hours_for_current_day = &time_entries.total_hours_for_current_day();
+
     for project in time_entries.uniq_projects() {
         let project_config = project_configs.get(&project).unwrap();
-        table.add_row(Row::new(vec![
-            Cell::new(&format_project_title(&project)),
-            Cell::new(&format_duration(&project.total_hours_for_current_day())).style_spec(
-                &format!(
-                    "b{}",
-                    target_hours_color(
-                        &project_config.target_daily_hours,
-                        &time_entries.total_hours_for_current_day()
-                    )
-                ),
-            ),
-            Cell::new(&format_weekly_hours(&project)),
-            Cell::new(&format_monthly_hours(&project)),
-            Cell::new(&format_targets(project_config)),
-        ]));
+        table.add_row(vec![
+            Cell::new(format_project_title(&project)),
+            bold_cell(format_duration(total_hours_for_current_day)).fg(target_hours_color(
+                &project_config.target_daily_hours,
+                total_hours_for_current_day,
+            )),
+            Cell::new(format_weekly_hours(&project)),
+            Cell::new(format_monthly_hours(&project)),
+            Cell::new(format_targets(project_config)),
+        ]);
     }
-    table.add_row(Row::new(vec![
-        Cell::new("Total").style_spec("b"),
-        Cell::new(&format_duration(
-            &time_entries.total_hours_for_current_day(),
-        ))
-        .style_spec("b"),
+
+    table.add_row(vec![
+        bold_cell("Total"),
+        bold_cell(format_duration(total_hours_for_current_day)),
         Cell::new(""),
-        Cell::new(&format_duration(&time_entries.total_hours())).style_spec("b"),
+        bold_cell(format_duration(&time_entries.total_hours())),
         Cell::new(""),
-    ]));
-    table.printstd();
+    ]);
+
+    println!("{table}");
 }
 
-fn header_cell(title: &str) -> Cell {
-    Cell::new(title).with_style(Attr::Bold)
+fn header_cell<T: ToString>(content: T) -> Cell {
+    bold_cell(content)
+}
+
+fn bold_cell<T: ToString>(content: T) -> Cell {
+    Cell::new(content).add_attribute(Attribute::Bold)
 }
 
 fn format_duration(duration: &chrono::Duration) -> String {
@@ -60,52 +61,53 @@ fn format_duration(duration: &chrono::Duration) -> String {
     }
 }
 
-fn target_hours_color(target_hours: &Option<u8>, duration: &chrono::Duration) -> String {
+fn target_hours_color(target_hours: &Option<u8>, duration: &chrono::Duration) -> Color {
     if target_hours.is_some() {
         let hours_as_i64 = target_hours.unwrap() as i64;
         if &hours_as_i64 - 1 > duration.num_hours() {
-            "Fr".to_string()
+            Color::Red
         } else if hours_as_i64 <= duration.num_hours() {
-            "Fg".to_string()
+            Color::Green
         } else {
-            "Fy".to_string()
+            Color::Yellow
         }
     } else {
-        "".to_string()
+        Color::Reset
     }
 }
 
 fn format_weekly_hours(project: &types::Project) -> String {
-    let weekly_hours = project.total_hours_for_current_week();
-    if weekly_hours.is_zero() {
-        "".to_string()
-    } else {
-        format!(
-            "{} / {}",
-            &format_duration(&weekly_hours),
-            &format_duration(&project.daily_avg_for_current_week()),
-        )
-    }
+    format_hours(
+        &project.total_hours_for_current_week(),
+        &project.daily_avg_for_current_week(),
+    )
 }
+
 fn format_monthly_hours(project: &types::Project) -> String {
-    let monthly_hours = project.total_hours();
-    if monthly_hours.is_zero() {
+    format_hours(
+        &project.total_hours(),
+        &project.daily_avg_for_current_month(),
+    )
+}
+
+fn format_hours(total_hours: &Duration, avg_hours: &Duration) -> String {
+    if total_hours.is_zero() {
         "".to_string()
     } else {
         format!(
             "{} / {}",
-            &format_duration(&monthly_hours),
-            &format_duration(&project.daily_avg_for_current_month()),
+            &format_duration(total_hours),
+            &format_duration(avg_hours),
         )
     }
 }
 
 fn format_project_title(project: &types::Project) -> String {
-    if project.client.is_some() {
-        format!("{} / {}", &project.client.clone().unwrap(), project.title)
-    } else {
-        project.title.to_string()
-    }
+    project
+        .client
+        .as_ref()
+        .map(|c| format!("{} / {}", c.clone(), project.title))
+        .unwrap_or_else(|| project.title.to_string())
 }
 
 fn format_targets(project_config: &ProjectConfig) -> String {
@@ -122,8 +124,7 @@ fn format_targets(project_config: &ProjectConfig) -> String {
 }
 
 fn format_target_hour(target: Option<u8>) -> String {
-    match target {
-        Some(target) => format!("{}h", target),
-        None => "-".to_string(),
-    }
+    target
+        .map(|t| format!("{}h", t))
+        .unwrap_or_else(|| "".to_string())
 }
