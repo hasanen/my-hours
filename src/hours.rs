@@ -17,7 +17,8 @@ pub fn show_monthly_hours() {
     }
 
     let project_configs = ensure_and_get_projects_configs(config, &time_entries.uniq_projects());
-    table::print(&time_entries, &project_configs);
+    let table = table::generate_table(&time_entries, &project_configs);
+    println!("\n{table}");
 }
 
 /// Refresh hours for current month from the integrations

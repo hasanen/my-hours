@@ -4,15 +4,11 @@ use crate::settings::{ProjectConfig, ProjectConfigs};
 use chrono::Duration;
 use comfy_table::{presets::ASCII_NO_BORDERS, Attribute, Cell, Color, Table};
 
-/// Prints given entries to terminal
-pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs) {
-    println!();
-
-    let table = generate_table(&time_entries, &project_configs);
-    println!("{table}");
-}
-
-fn generate_table(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs) -> Table {
+/// Generate ASCII table of entries
+pub fn generate_table(
+    time_entries: &types::TimeEntries,
+    project_configs: &ProjectConfigs,
+) -> Table {
     let mut table = Table::new();
     table.load_preset(ASCII_NO_BORDERS).set_header(vec![
         header_cell("Project"),
