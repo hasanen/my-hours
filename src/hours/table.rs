@@ -22,10 +22,12 @@ pub fn print(time_entries: &types::TimeEntries, project_configs: &ProjectConfigs
         let project_config = project_configs.get(&project).unwrap();
         table.add_row(vec![
             Cell::new(format_project_title(&project)),
-            bold_cell(format_duration(total_hours_for_current_day)).fg(target_hours_color(
-                &project_config.target_daily_hours,
-                total_hours_for_current_day,
-            )),
+            bold_cell(format_duration(&project.total_hours_for_current_day())).fg(
+                target_hours_color(
+                    &project_config.target_daily_hours,
+                    &project.total_hours_for_current_day(),
+                ),
+            ),
             Cell::new(format_weekly_hours(&project)),
             Cell::new(format_monthly_hours(&project)),
             Cell::new(format_targets(project_config)),
@@ -65,12 +67,12 @@ fn target_hours_color(target_hours: &Option<u8>, duration: &chrono::Duration) ->
     if target_hours.is_some() {
         let hours_as_i64 = target_hours.unwrap() as i64;
         if &hours_as_i64 - 1 > duration.num_hours() {
-                Color::Red
+            Color::Red
         } else if hours_as_i64 <= duration.num_hours() {
-                Color::Green
-            } else {
-                Color::Yellow
-            }
+            Color::Green
+        } else {
+            Color::Yellow
+        }
     } else {
         Color::Reset
     }
