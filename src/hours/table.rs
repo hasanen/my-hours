@@ -41,7 +41,10 @@ pub fn generate_table(
             &time_entries.total_hours_for_current_week(),
             &time_entries.daily_avg_for_current_week(),
         )),
-        bold_cell(format_duration(&time_entries.total_hours())),
+        bold_cell(format_hours(
+            &time_entries.total_hours(),
+            &time_entries.daily_avg_for_current_month(),
+        )),
         Cell::new(""),
     ]);
 
@@ -306,7 +309,7 @@ mod tests {
 =========================================================================================================
  Project |   1h  0m |   1h  0m /   1h  0m      |   1h  0m /   1h  0m       |                             
 ---------+----------+--------------------------+---------------------------+-----------------------------
- Total   |   1h  0m |   1h  0m /   1h  0m      |   1h  0m                  |                             ";
+ Total   |   1h  0m |   1h  0m /   1h  0m      |   1h  0m /   1h  0m       |                             ";
 
             assert_eq!("\n".to_string() + &hours_table.to_string(), expected)
         }
