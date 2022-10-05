@@ -37,8 +37,9 @@ pub fn generate_table(
     table.add_row(vec![
         bold_cell("Total"),
         bold_cell(format_duration(&time_entries.total_hours_for_current_day())),
-        bold_cell(format_duration(
+        bold_cell(format_hours(
             &time_entries.total_hours_for_current_week(),
+            &time_entries.daily_avg_for_current_week(),
         )),
         bold_cell(format_duration(&time_entries.total_hours())),
         Cell::new(""),
