@@ -18,8 +18,6 @@ pub fn generate_table(
         header_cell("Target (day / week / month)"),
     ]);
 
-    let total_hours_for_current_day = &time_entries.total_hours_for_current_day();
-
     for project in time_entries.uniq_projects() {
         let project_config = project_configs.get(&project).unwrap();
         table.add_row(vec![
@@ -38,8 +36,10 @@ pub fn generate_table(
 
     table.add_row(vec![
         bold_cell("Total"),
-        bold_cell(format_duration(total_hours_for_current_day)),
-        Cell::new(""),
+        bold_cell(format_duration(&time_entries.total_hours_for_current_day())),
+        bold_cell(format_duration(
+            &time_entries.total_hours_for_current_week(),
+        )),
         bold_cell(format_duration(&time_entries.total_hours())),
         Cell::new(""),
     ]);
