@@ -1,0 +1,7 @@
+bin.name = "my-hours"
+args = ["refresh"]
+status.code = 0
+stdout = """
+Updated monthly hours from integrations
+"""
+stderr = ""

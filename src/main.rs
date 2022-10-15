@@ -48,3 +48,9 @@ fn main() {
         }
     }
 }
+
+#[test]
+fn verify_cli() {
+    use clap::CommandFactory;
+    Command::command().debug_assert()
+}

@@ -1,0 +1,7 @@
+bin.name = "my-hours"
+args = ["integrations", "list"]
+status.code = 0
+stdout = """
+No integrations set up yet.
+"""
+stderr = ""

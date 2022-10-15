@@ -1,0 +1,12 @@
+bin.name = "my-hours"
+args = ["--refresh"]
+status.code = 0
+stdout = """
+Updated monthly hours from integrations
+Updated monthly hours from integrations
+
+ Project | Today | Current week / Daily AVG | Current month / Daily AVG | Target (day / week / month) 
+======================================================================================================
+ Total   |       |                          |                           |                             
+"""
+stderr = ""

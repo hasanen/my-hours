@@ -1,0 +1,8 @@
+bin.name = "my-hours"
+args = ["integrations", "setup", "toggl"]
+status.code = 2
+stdout = """
+Toggl API key:
+You need to provide Toggl API key
+"""
+stderr = ""

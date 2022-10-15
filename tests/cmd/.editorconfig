@@ -1,0 +1,4 @@
+root = false
+
+[*.toml]
+trim_trailing_whitespace = false
