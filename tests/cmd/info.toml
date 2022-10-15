@@ -1,0 +1,7 @@
+bin.name = "my-hours"
+args = ["info"]
+status.code = 0
+stdout = """
+Settings folder: [..]/settings.toml
+"""
+stderr = ""

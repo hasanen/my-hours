@@ -1,0 +1,13 @@
+bin.name = "my-hours"
+args = ["integrations", "setup", "toggl", "--help"]
+status.code = 0
+stdout = """
+my-hours-integrations-setup-toggl 
+
+USAGE:
+    my-hours integrations setup toggl
+
+OPTIONS:
+    -h, --help    Print help information
+"""
+stderr = ""

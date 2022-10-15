@@ -22,7 +22,14 @@ pub struct Workspace {
 
 /// Setup a new toggl integration. You will need an API key, which you can get from your profile page <https://track.toggl.com/profile>
 pub fn setup() {
-    let api_key = ui::ask_input::<String>("Toggl API key:").unwrap();
+    let api_key = ui::ask_input::<String>("Toggl API key:");
+
+    if api_key.is_none() {
+        println!("You need to provide Toggl API key");
+        std::process::exit(2);
+    }
+
+    let api_key = api_key.unwrap();
 
     let workspaces = api::get_workspaces(&api_key)
         .iter()

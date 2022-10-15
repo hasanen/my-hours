@@ -12,3 +12,7 @@ Until this has been published, you can do a release build after cloning the repo
 Then you can check help to see all available commands
 
     hours --help
+
+## Tests
+
+- update snapshots `TRYCMD=overwrite cargo test`
