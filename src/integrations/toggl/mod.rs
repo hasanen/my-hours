@@ -12,12 +12,20 @@ mod api;
 pub struct Config {
     pub key: String,
     pub workspaces: Vec<Workspace>,
+    pub user: User,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Workspace {
     pub id: usize,
     pub name: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct User {
+    pub id: usize,
+    pub fullname: String,
+    pub email: String,
 }
 
 /// Setup a new toggl integration. You will need an API key, which you can get from your profile page <https://track.toggl.com/profile>
@@ -32,9 +40,16 @@ pub fn setup() {
         })
         .collect();
 
+    let api_user = api::get_me(&api_key);
+
     let toggl = Config {
         key: api_key,
         workspaces,
+        user: User {
+            id: api_user.id,
+            fullname: api_user.fullname.to_string(),
+            email: api_user.email.to_string(),
+        },
     };
 
     let mut config = settings::load();

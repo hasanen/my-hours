@@ -2,15 +2,27 @@ pub mod types;
 use chrono::{Date, Local};
 use std::collections::HashMap;
 
-static API_URL: &str = "https://api.track.toggl.com/";
+static API_URL: &str = "https://api.track.toggl.com";
 static API_BASIC_AUTH_PW: &str = "api_token";
 static USER_AGENT: &str = "https://github.com/hasanen/my-hours";
 static DATE_FORMAT: &str = "%Y-%m-%d";
 
 #[tokio::main]
+/// Get current user's profile
+pub async fn get_me(api_key: &str) -> types::User {
+    let user: types::User = get("api/v9/me", api_key, &None)
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    user
+}
+
+#[tokio::main]
 /// Get all workspaces where user has access to
 pub async fn get_workspaces(api_key: &str) -> Vec<types::Workspace> {
-    let workspaces: Vec<types::Workspace> = get("api/v8/workspaces", api_key, &None)
+    let workspaces: Vec<types::Workspace> = get("api/v9/workspaces", api_key, &None)
         .await
         .unwrap()
         .json()

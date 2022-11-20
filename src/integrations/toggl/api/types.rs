@@ -7,6 +7,12 @@ pub struct Workspace {
     pub name: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
+pub struct User {
+    pub id: usize,
+    pub fullname: String,
+    pub email: String,
+}
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TimeEntryResponse {
     pub total_count: usize,
     pub per_page: usize,
