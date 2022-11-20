@@ -35,6 +35,7 @@ pub async fn get_workspaces(api_key: &str) -> Vec<types::Workspace> {
 /// Get time entries for given workspaces.
 pub async fn get_time_entries(
     workspace_id: &usize,
+    user_id: &usize,
     start_date: &Date<Local>,
     end_date: &Date<Local>,
     api_key: &str,
@@ -46,7 +47,7 @@ pub async fn get_time_entries(
     let mut page = 1;
 
     while items_left {
-        let params = time_entries_params(workspace_id, start_date, end_date, &page);
+        let params = time_entries_params(workspace_id, user_id, start_date, end_date, &page);
         let time_entry_response: types::TimeEntryResponse =
             get("reports/api/v2/details", api_key, &params)
                 .await
@@ -108,12 +109,14 @@ fn check_status(response: &reqwest::Response) {
 
 fn time_entries_params(
     workspace_id: &usize,
+    user_id: &usize,
     start_date: &Date<Local>,
     end_date: &Date<Local>,
     page: &usize,
 ) -> Option<HashMap<String, String>> {
     let params = [
         ("workspace_id".to_string(), workspace_id.to_string()),
+        ("user_ids".to_string(), user_id.to_string()),
         (
             "since".to_string(),
             start_date.format(DATE_FORMAT).to_string(),

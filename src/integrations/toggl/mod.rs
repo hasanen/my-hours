@@ -76,7 +76,15 @@ pub fn time_entries_for_dates(
 
     let time_entries: Vec<Vec<api::types::TimeEntry>> = workspace_ids
         .iter()
-        .map(|workspace_id| api::get_time_entries(workspace_id, start_date, end_date, &config.key))
+        .map(|workspace_id| {
+            api::get_time_entries(
+                workspace_id,
+                &config.user.id,
+                start_date,
+                end_date,
+                &config.key,
+            )
+        })
         .collect();
 
     return time_entries
