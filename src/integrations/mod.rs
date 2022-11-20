@@ -103,6 +103,11 @@ mod tests {
                 toggl: Some(
                     [TogglConfig {
                         key: "key".to_string(),
+                        user: integrations::toggl::User {
+                            id: 1,
+                            fullname: "John Doe".to_string(),
+                            email: "john.doe@example.com".to_string(),
+                        },
                         workspaces: [integrations::toggl::Workspace {
                             id: 1,
                             name: "Test".to_string(),
