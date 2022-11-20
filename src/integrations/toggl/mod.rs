@@ -85,7 +85,7 @@ pub fn time_entries_for_dates(
         .map(|api_entry| hours::types::TimeEntry {
             description: String::from(api_entry.description.as_ref().unwrap_or(&String::from(""))),
             client: api_entry.client.clone(),
-            project: String::from(api_entry.project.as_ref().unwrap()),
+            project: String::from(api_entry.project.as_ref().unwrap_or(&String::from(""))),
             start: api_entry.start,
             end: api_entry.end,
             billable_amount_cents: (api_entry.billable.unwrap_or(0.0) * 100.0) as usize,
