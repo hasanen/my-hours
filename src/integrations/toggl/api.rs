@@ -1,5 +1,5 @@
 pub mod types;
-use chrono::{Date, Local};
+use chrono::NaiveDate;
 use std::collections::HashMap;
 
 static API_URL: &str = "https://api.track.toggl.com";
@@ -36,8 +36,8 @@ pub async fn get_workspaces(api_key: &str) -> Vec<types::Workspace> {
 pub async fn get_time_entries(
     workspace_id: &usize,
     user_id: &usize,
-    start_date: &Date<Local>,
-    end_date: &Date<Local>,
+    start_date: &NaiveDate,
+    end_date: &NaiveDate,
     api_key: &str,
 ) -> Vec<types::TimeEntry> {
     let mut time_entries = Vec::new();
@@ -110,8 +110,8 @@ fn check_status(response: &reqwest::Response) {
 fn time_entries_params(
     workspace_id: &usize,
     user_id: &usize,
-    start_date: &Date<Local>,
-    end_date: &Date<Local>,
+    start_date: &NaiveDate,
+    end_date: &NaiveDate,
     page: &usize,
 ) -> Option<HashMap<String, String>> {
     let params = [

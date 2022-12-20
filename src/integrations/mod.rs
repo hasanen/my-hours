@@ -39,7 +39,7 @@ pub fn execute(action: &Action) {
 /// Loop over integrations and get time entries for current month
 pub fn get_monthly_time_entries() -> TimeEntries {
     let settings = settings::load();
-    let (start_date, end_date) = dates::month_first_and_last_dates(&Local::today());
+    let (start_date, end_date) = dates::month_first_and_last_dates(&Local::now().date_naive());
 
     let entries: Vec<Vec<TimeEntry>> = match settings.toggl {
         Some(toggl) => toggl

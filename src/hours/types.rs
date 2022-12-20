@@ -1,4 +1,4 @@
-use chrono::{offset::TimeZone, Date, DateTime, Datelike, Duration, Local, NaiveDate, Weekday};
+use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, Weekday};
 use digest::Digest;
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
@@ -30,7 +30,7 @@ pub trait TimeEntryCalculations {
         let durations: Vec<Duration> = self
             .entries()
             .iter()
-            .filter(|entry| dates.contains(&entry.start.unwrap().date()))
+            .filter(|entry| dates.contains(&entry.start.unwrap().date_naive()))
             .map(|entry| entry.duration())
             .collect();
         Self::sum(&durations)
@@ -66,39 +66,38 @@ pub trait TimeEntryCalculations {
             });
     }
 
-    fn dates_from_monday(&self) -> Vec<Date<Local>> {
-        let current_date = Local::today();
-        let monday = NaiveDate::from_isoywd(
+    fn dates_from_monday(&self) -> Vec<NaiveDate> {
+        let current_date = Local::now().date_naive();
+        let monday = NaiveDate::from_isoywd_opt(
             current_date.year(),
             current_date.iso_week().week(),
             Weekday::Mon,
-        );
+        )
+        .unwrap();
         monday
             .iter_days()
             .take(current_date.weekday().number_from_monday() as usize)
-            .enumerate()
-            .map(|d| Local.from_local_date(&d.1).unwrap())
             .collect()
     }
 
-    fn current_week_work_days(&self) -> HashSet<Date<Local>> {
+    fn current_week_work_days(&self) -> HashSet<NaiveDate> {
         let dates_from_monday = self.dates_from_monday();
         let mut working_dates = HashSet::new();
         for entry in self
             .entries()
             .iter()
-            .filter(|entry| dates_from_monday.contains(&entry.start.unwrap().date()))
+            .filter(|entry| dates_from_monday.contains(&entry.start.unwrap().date_naive()))
         {
-            working_dates.insert(entry.start.unwrap().date());
+            working_dates.insert(entry.start.unwrap().date_naive());
         }
 
         working_dates
     }
 
-    fn current_month_work_days(&self) -> HashSet<Date<Local>> {
+    fn current_month_work_days(&self) -> HashSet<NaiveDate> {
         let mut working_dates = HashSet::new();
         for entry in self.entries().iter() {
-            working_dates.insert(entry.start.unwrap().date());
+            working_dates.insert(entry.start.unwrap().date_naive());
         }
 
         working_dates
@@ -120,7 +119,7 @@ impl TimeEntry {
         self.end.unwrap().signed_duration_since(self.start.unwrap())
     }
     pub fn is_for_current_date(&self) -> bool {
-        self.start.unwrap().date() == Local::today()
+        self.start.unwrap().date_naive() == Local::now().date_naive()
     }
 }
 

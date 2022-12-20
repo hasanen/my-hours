@@ -186,9 +186,17 @@ mod tests {
                 entries: vec![],
             };
 
-            let today = Local::today();
-            let start = today.and_hms_milli(1, 0, 00, 0);
-            let end = today.and_hms_milli(13, 0, 0, 0);
+            let today = Local::now().date_naive();
+            let start = today
+                .and_hms_milli_opt(1, 0, 00, 0)
+                .unwrap()
+                .and_local_timezone(Local)
+                .unwrap();
+            let end = today
+                .and_hms_milli_opt(13, 0, 0, 0)
+                .unwrap()
+                .and_local_timezone(Local)
+                .unwrap();
 
             project.entries.push(types::TimeEntry {
                 description: "Monday".to_string(),

@@ -4,7 +4,7 @@
 
 use crate::hours::{self, ui};
 use crate::settings;
-use chrono::{Date, Local};
+use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 mod api;
 
@@ -69,8 +69,8 @@ pub fn setup() {
 
 pub fn time_entries_for_dates(
     config: &Config,
-    start_date: &Date<Local>,
-    end_date: &Date<Local>,
+    start_date: &NaiveDate,
+    end_date: &NaiveDate,
 ) -> Vec<hours::types::TimeEntry> {
     let workspace_ids: Vec<usize> = config.workspaces.iter().map(|w| w.id).collect();
 
