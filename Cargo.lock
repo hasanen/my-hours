@@ -693,7 +693,7 @@ dependencies = [
 
 [[package]]
 name = "my-hours"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "chrono",
  "clap",
