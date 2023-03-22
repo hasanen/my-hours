@@ -4,23 +4,21 @@
 
 Goal of the project is to create command line app to combine tracked hours in tracking services and provide easy way to see if the monthly goal will be met or not.
 
-Until this has been published, you can do a release build after cloning the repository and setting an alias
+Install
 
-    cargo build --release
-    alias hours="~/PATH/target/release/my-hours"
+    cargo install my-hours
 
 Then you can check help to see all available commands
 
-    hours --help
-
+    my-hours --help
 
 ## Usage
 
 After building and setting up the alias:
 
 ```bash
-$ hours --help
-Usage: hours [OPTIONS] [COMMAND]
+$ my-hours --help
+Usage: my-hours [OPTIONS] [COMMAND]
 
 Commands:
   integrations  Manage integrations
@@ -38,11 +36,11 @@ Options:
 Set up the integration to [Toggl](http://toggl.com/):
 
 ```bash
-$ hours integrations setup toggl
+$ my-hours integrations setup toggl
 Toggl API key:
 deadbeefe1e7e59b53084173c2685f12
 New toggle configuration saved!
-$ hours integrations list
+$ my-hours integrations list
 Enabled integrations:
 
 Toggl, workspaces: Hours's workspace
@@ -51,7 +49,7 @@ Toggl, workspaces: Hours's workspace
 Set your target hours:
 
 ```bash
-$ hours
+$ my-hours
 Updated monthly hours from integrations
 What is your target daily hours for Website?
 8
@@ -70,4 +68,4 @@ Updated monthly hours from integrations
 
 ```
 
-From now on, you can run `hours` to see the status. Targets can be updated in the settings, see `hours info`.
+From now on, you can run `my-hours` to see the status. Targets can be updated in the settings, see `my-hours info`.
