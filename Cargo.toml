@@ -5,6 +5,10 @@ edition = "2021"
 authors = ["Joni Hasanen <joni@pieceofcode.com>"]
 license = "MIT"
 description = "Command line app to combine tracked hours in tracking services and provide easy way to see if the monthly goal will be met or not."
+homepage = "https://github.com/hasanen/my-hours"
+repository = "https://github.com/hasanen/my-hours"
+readme = "README.md"
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
