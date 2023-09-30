@@ -1,6 +1,7 @@
 pub mod types;
 use chrono::NaiveDate;
 use std::collections::HashMap;
+use crate::string_types::ApiKey;
 
 static API_URL: &str = "https://api.track.toggl.com";
 static API_BASIC_AUTH_PW: &str = "api_token";
@@ -9,7 +10,7 @@ static DATE_FORMAT: &str = "%Y-%m-%d";
 
 #[tokio::main]
 /// Get current user's profile
-pub async fn get_me(api_key: &str) -> types::User {
+pub async fn get_me(api_key: &ApiKey) -> types::User {
     let user: types::User = get("api/v9/me", api_key, &None)
         .await
         .unwrap()
@@ -21,7 +22,7 @@ pub async fn get_me(api_key: &str) -> types::User {
 
 #[tokio::main]
 /// Get all workspaces where user has access to
-pub async fn get_workspaces(api_key: &str) -> Vec<types::Workspace> {
+pub async fn get_workspaces(api_key: &ApiKey) -> Vec<types::Workspace> {
     let workspaces: Vec<types::Workspace> = get("api/v9/workspaces", api_key, &None)
         .await
         .unwrap()
@@ -38,7 +39,7 @@ pub async fn get_time_entries(
     user_id: &usize,
     start_date: &NaiveDate,
     end_date: &NaiveDate,
-    api_key: &str,
+    api_key: &ApiKey,
 ) -> Vec<types::TimeEntry> {
     let mut time_entries = Vec::new();
 
@@ -69,13 +70,13 @@ pub async fn get_time_entries(
 
 async fn get(
     path: &str,
-    api_key: &str,
+    api_key: &ApiKey,
     params: &Option<HashMap<String, String>>,
 ) -> Result<reqwest::Response, reqwest::Error> {
     let request_url = api_url(path);
     let mut request = reqwest::Client::new()
         .get(request_url)
-        .basic_auth(api_key, Some(API_BASIC_AUTH_PW));
+        .basic_auth(api_key.as_str(), Some(API_BASIC_AUTH_PW));
 
     if params.is_some() {
         request = request.query(&params.as_ref().unwrap());

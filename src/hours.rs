@@ -88,7 +88,7 @@ fn ensure_and_get_projects_configs(
             config_changed = true;
             project_configs
                 .configs
-                .insert(project.key.to_string(), new_config);
+                .insert(project.key.clone(), new_config);
         };
     }
     if config_changed {

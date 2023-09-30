@@ -1,16 +1,17 @@
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
+use crate::string_types::{Email, Fullname, WorkspaceName, Description, ClientName, ProjectName };
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Workspace {
     pub id: usize,
-    pub name: String,
+    pub name: WorkspaceName,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct User {
     pub id: usize,
-    pub fullname: String,
-    pub email: String,
+    pub fullname: Fullname,
+    pub email: Email,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TimeEntryResponse {
@@ -22,9 +23,9 @@ pub struct TimeEntryResponse {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TimeEntry {
     pub id: usize,
-    pub description: Option<String>,
-    pub client: Option<String>,
-    pub project: Option<String>,
+    pub description: Option<Description>,
+    pub client: Option<ClientName>,
+    pub project: Option<ProjectName>,
     pub start: Option<DateTime<Local>>,
     pub end: Option<DateTime<Local>>,
     pub billable: Option<f32>,

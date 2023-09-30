@@ -6,9 +6,10 @@
 #![deny(missing_docs)]
 use clap::Parser;
 pub mod dates;
+pub mod settings;
 mod hours;
 mod integrations;
-pub mod settings;
+mod string_types;
 
 #[derive(Parser, Debug)]
 #[structopt(name = "My hours")]

@@ -71,7 +71,7 @@ pub fn list_integrations(config: &settings::Config, mut writer: impl std::io::Wr
 fn list_toggl_integrations(toggl: &[TogglConfig], mut writer: impl std::io::Write) {
     for t in toggl.iter() {
         let workspace_names: Vec<String> =
-            t.workspaces.iter().map(|ws| ws.name.to_string()).collect();
+            t.workspaces.iter().map(|ws| ws.name.as_str().to_string()).collect();
         writeln!(writer, "Toggl, workspaces: {}", workspace_names.join(", ")).unwrap();
     }
 }
@@ -81,6 +81,7 @@ mod tests {
     mod show_integrations {
         use super::super::*;
         use crate::integrations;
+        use crate::string_types::{ApiKey, Email, Fullname, WorkspaceName};
 
         static DEFAULT_CONFIG: settings::Config = settings::Config {
             refresh_treshold: Some(180),
@@ -102,15 +103,15 @@ mod tests {
             let config = settings::Config {
                 toggl: Some(
                     [TogglConfig {
-                        key: "key".to_string(),
+                        key: ApiKey("key".to_string()),
                         user: integrations::toggl::User {
                             id: 1,
-                            fullname: "John Doe".to_string(),
-                            email: "john.doe@example.com".to_string(),
+                            fullname: Fullname("John Doe".to_string()),
+                            email: Email("john.doe@example.com".to_string()),
                         },
                         workspaces: [integrations::toggl::Workspace {
                             id: 1,
-                            name: "Test".to_string(),
+                            name: WorkspaceName("Test".to_string()),
                         }]
                         .to_vec(),
                     }]
