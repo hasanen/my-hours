@@ -20,6 +20,8 @@ pub struct ClientName(pub String);
 pub struct ProjectName(pub String);
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProjectHash(pub String);
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct FilePath(pub String);
 
 impl ApiKey {
   pub fn as_str(&self) -> &str {
@@ -42,6 +44,11 @@ impl Email {
   }
 }
 impl ProjectName {
+  pub fn as_str(&self) -> &str {
+      &self.0
+  }
+}
+impl FilePath {
   pub fn as_str(&self) -> &str {
       &self.0
   }
