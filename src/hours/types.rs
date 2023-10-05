@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use std::collections::HashSet;
 use std::str;
+use crate::strict_string::{Description, ClientName, ProjectName, ProjectHash};
 
 pub trait TimeEntryCalculations {
     fn entries(&self) -> &Vec<TimeEntry>;
@@ -106,9 +107,9 @@ pub trait TimeEntryCalculations {
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Hash)]
 pub struct TimeEntry {
-    pub description: String,
-    pub client: Option<String>,
-    pub project: String,
+    pub description: Description,
+    pub client: Option<ClientName>,
+    pub project: ProjectName,
     pub start: Option<DateTime<Local>>,
     pub end: Option<DateTime<Local>>,
     pub billable_amount_cents: usize,
@@ -138,12 +139,12 @@ impl TimeEntries {
 
         for entry in self.entries.iter() {
             let mut hasher = Sha256::default();
-            hasher.update(&entry.project);
+            hasher.update(entry.project.as_str());
             let finalized_hash = format!("{:x}", &hasher.finalize());
             let project = Project {
-                title: entry.project.to_string(),
+                title: entry.project.clone(),
                 client: entry.client.clone(),
-                key: finalized_hash,
+                key: ProjectHash::new(finalized_hash),
                 entries: self.entries_for_project(&entry.project),
             };
             projects.insert(project);
@@ -153,7 +154,7 @@ impl TimeEntries {
         projects_as_vec
     }
 
-    fn entries_for_project(&self, project_title: &str) -> Vec<TimeEntry> {
+    fn entries_for_project(&self, project_title: &ProjectName) -> Vec<TimeEntry> {
         return self
             .entries
             .iter()
@@ -165,9 +166,9 @@ impl TimeEntries {
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Project {
-    pub client: Option<String>,
-    pub title: String,
-    pub key: String,
+    pub client: Option<ClientName>,
+    pub title: ProjectName,
+    pub key: ProjectHash,
     pub entries: Vec<TimeEntry>,
 }
 

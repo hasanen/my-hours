@@ -1,6 +1,7 @@
 //! Store and load settings
 use crate::hours::types::Project;
 use crate::integrations::toggl::Config as TogglConfig;
+use crate::strict_string::ProjectHash;
 use chrono::{DateTime, Local};
 use directories_next::ProjectDirs;
 use serde::{Deserialize, Serialize};
@@ -28,7 +29,7 @@ pub struct Config {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProjectConfigs {
     /// Existing configs
-    pub configs: HashMap<String, ProjectConfig>,
+    pub configs: HashMap<ProjectHash, ProjectConfig>,
 }
 
 /// Single config project

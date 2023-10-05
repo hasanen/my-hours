@@ -1,16 +1,22 @@
 use crate::integrations;
 use crate::settings;
+use crate::strict_string::FilePath;
 use chrono::Local;
-mod store;
+use std::collections::HashMap;
 mod table;
+mod store;
+use store::{Store, DiskStore};
 pub mod types;
 pub mod ui;
-use std::collections::HashMap;
+
+
+
+static HOURS_FILENAME: &str = "hours.toml";
 
 /// Show your current monthly progress
 pub fn show_monthly_hours() {
     let config = settings::load();
-    let mut time_entries = store::load();
+    let mut time_entries = get_disk_store().load();
 
     if refresh_required(&config) {
         time_entries = refresh_hours();
@@ -33,7 +39,7 @@ pub fn print_info() {
 
 fn refresh_hours() -> types::TimeEntries {
     let time_entries = integrations::get_monthly_time_entries();
-    match store::save(&time_entries) {
+    match get_disk_store().save(&time_entries) {
         Ok(_) => println!("Updated monthly hours from integrations"),
         Err(err) => println!("Error occured during refreshing hours: {}", err),
     }
@@ -88,7 +94,7 @@ fn ensure_and_get_projects_configs(
             config_changed = true;
             project_configs
                 .configs
-                .insert(project.key.to_string(), new_config);
+                .insert(project.key.clone(), new_config);
         };
     }
     if config_changed {
@@ -108,5 +114,14 @@ fn ask_target(question: &str) -> Option<u8> {
     match ui::ask_input::<u8>(question) {
         Some(num) if num > 0 => Some(num),
         _ => None,
+    }
+}
+
+
+fn get_disk_store() -> DiskStore {
+    let filepath_str =  settings::app_path(HOURS_FILENAME)
+    .unwrap_or_else(|| panic!("Failed to locate {}", HOURS_FILENAME));
+    DiskStore{
+        path: FilePath::new(filepath_str)
     }
 }

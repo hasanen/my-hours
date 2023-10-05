@@ -4,13 +4,14 @@
 
 use crate::hours::{self, ui};
 use crate::settings;
+use crate::strict_string::{ApiKey, WorkspaceName, Fullname, Email, ProjectName, Description};
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 mod api;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
-    pub key: String,
+    pub key: ApiKey,
     pub workspaces: Vec<Workspace>,
     pub user: User,
 }
@@ -18,25 +19,27 @@ pub struct Config {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Workspace {
     pub id: usize,
-    pub name: String,
+    pub name: WorkspaceName,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct User {
     pub id: usize,
-    pub fullname: String,
-    pub email: String,
+    pub fullname: Fullname,
+    pub email: Email,
 }
+
+
 
 /// Setup a new toggl integration. You will need an API key, which you can get from your profile page <https://track.toggl.com/profile>
 pub fn setup() {
-    let api_key = ui::ask_input::<String>("Toggl API key:").unwrap();
+    let api_key = ui::ask_input::<String>("Toggl API key:").unwrap().into();
 
     let workspaces = api::get_workspaces(&api_key)
         .iter()
         .map(|w| Workspace {
             id: w.id,
-            name: w.name.to_string(),
+            name: w.name.clone(),
         })
         .collect();
 
@@ -47,8 +50,8 @@ pub fn setup() {
         workspaces,
         user: User {
             id: api_user.id,
-            fullname: api_user.fullname.to_string(),
-            email: api_user.email.to_string(),
+            fullname: api_user.fullname,
+            email: api_user.email,
         },
     };
 
@@ -91,9 +94,9 @@ pub fn time_entries_for_dates(
         .concat()
         .iter()
         .map(|api_entry| hours::types::TimeEntry {
-            description: String::from(api_entry.description.as_ref().unwrap_or(&String::from(""))),
+            description: api_entry.description.clone().unwrap_or(Description::new(String::from(""))),
             client: api_entry.client.clone(),
-            project: String::from(api_entry.project.as_ref().unwrap_or(&String::from(""))),
+            project: api_entry.project.clone().unwrap_or(ProjectName::new(String::from(""))),
             start: api_entry.start,
             end: api_entry.end,
             billable_amount_cents: (api_entry.billable.unwrap_or(0.0) * 100.0) as usize,
