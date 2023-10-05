@@ -168,14 +168,14 @@ mod tests {
     mod formats {
         use super::super::*;
         use chrono::Local;
-        use crate::string_types::{ProjectHash, ProjectName, Description, ClientName};
+        use crate::strict_string::{ProjectHash, ProjectName, Description, ClientName};
 
         #[test]
         fn it_formats_weekly_monthly_hours() {
             let project = types::Project {
                 client: None,
-                title: ProjectName("my-hours".to_string()),
-                key: ProjectHash("".to_string()),
+                title: ProjectName::new("my-hours".to_string()),
+                key: ProjectHash::new("".to_string()),
                 entries: vec![],
             };
             assert_eq!(format_monthly_hours(&project), "");
@@ -183,8 +183,8 @@ mod tests {
 
             let mut project = types::Project {
                 client: None,
-                title: ProjectName("my-hours".to_string()),
-                key: ProjectHash("".to_string()),
+                title: ProjectName::new("my-hours".to_string()),
+                key: ProjectHash::new("".to_string()),
                 entries: vec![],
             };
 
@@ -201,9 +201,9 @@ mod tests {
                 .unwrap();
 
             project.entries.push(types::TimeEntry {
-                description: Description("Monday".to_string()),
+                description: Description::new("Monday".to_string()),
                 client: None,
-                project: ProjectName("my-hours".to_string()),
+                project: ProjectName::new("my-hours".to_string()),
                 start: Some(start),
                 end: Some(end),
                 billable_amount_cents: 1,
@@ -230,16 +230,16 @@ mod tests {
         fn it_formats_project_title() {
             let project_no_client = types::Project {
                 client: None,
-                title: ProjectName("my-hours".to_string()),
-                key: ProjectHash("".to_string()),
+                title: ProjectName::new("my-hours".to_string()),
+                key: ProjectHash::new("".to_string()),
                 entries: vec![],
             };
             assert_eq!(format_project_title(&project_no_client), "my-hours");
 
             let project_with_client = types::Project {
-                client: Some(ClientName("hasanen".to_string())),
-                title: ProjectName("my-hours".to_string()),
-                key: ProjectHash("".to_string()),
+                client: Some(ClientName::new("hasanen".to_string())),
+                title: ProjectName::new("my-hours".to_string()),
+                key: ProjectHash::new("".to_string()),
                 entries: vec![],
             };
             assert_eq!(
@@ -279,14 +279,14 @@ mod tests {
         use digest::Digest;
         use sha2::Sha256;
         use std::collections::HashMap;
-        use crate::string_types::{ProjectName, Description, ProjectHash};
+        use crate::strict_string::{ProjectName, Description, ProjectHash};
 
         #[test]
         fn formats_table_with_one_project_work_done_current_day_no_targets() {
-            let project_name = ProjectName("Project".to_string());
+            let project_name = ProjectName::new("Project".to_string());
             let time_entries = types::TimeEntries {
                 entries: [types::TimeEntry {
-                    description: Description("Description".to_string()),
+                    description: Description::new("Description".to_string()),
                     client: None,
                     project: project_name.clone(),
                     billable_amount_cents: 0,
@@ -301,7 +301,7 @@ mod tests {
             };
             let mut hasher = Sha256::default();
             hasher.update(project_name.as_str());
-            let project_key = ProjectHash(format!("{:x}", &hasher.finalize()));
+            let project_key = ProjectHash::new(format!("{:x}", &hasher.finalize()));
 
             let project_configs = ProjectConfigs {
                 configs: HashMap::from([(

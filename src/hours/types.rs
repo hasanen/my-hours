@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use std::collections::HashSet;
 use std::str;
-use crate::string_types::{Description, ClientName, ProjectName, ProjectHash};
+use crate::strict_string::{Description, ClientName, ProjectName, ProjectHash};
 
 pub trait TimeEntryCalculations {
     fn entries(&self) -> &Vec<TimeEntry>;
@@ -144,7 +144,7 @@ impl TimeEntries {
             let project = Project {
                 title: entry.project.clone(),
                 client: entry.client.clone(),
-                key: ProjectHash(finalized_hash),
+                key: ProjectHash::new(finalized_hash),
                 entries: self.entries_for_project(&entry.project),
             };
             projects.insert(project);

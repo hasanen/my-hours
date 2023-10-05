@@ -1,6 +1,6 @@
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
-use crate::string_types::{Email, Fullname, WorkspaceName, Description, ClientName, ProjectName };
+use crate::strict_string::{Email, Fullname, WorkspaceName, Description, ClientName, ProjectName };
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Workspace {

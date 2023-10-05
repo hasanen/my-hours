@@ -1,6 +1,6 @@
 use crate::integrations;
 use crate::settings;
-use crate::string_types::FilePath;
+use crate::strict_string::FilePath;
 use chrono::Local;
 use std::collections::HashMap;
 mod table;
@@ -122,6 +122,6 @@ fn get_disk_store() -> DiskStore {
     let filepath_str =  settings::app_path(HOURS_FILENAME)
     .unwrap_or_else(|| panic!("Failed to locate {}", HOURS_FILENAME));
     DiskStore{
-        path: FilePath(filepath_str)
+        path: FilePath::new(filepath_str)
     }
 }

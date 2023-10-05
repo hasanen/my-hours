@@ -9,7 +9,7 @@ pub mod dates;
 pub mod settings;
 mod hours;
 mod integrations;
-mod string_types;
+mod strict_string;
 
 #[derive(Parser, Debug)]
 #[structopt(name = "My hours")]

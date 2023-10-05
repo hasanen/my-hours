@@ -1,6 +1,6 @@
 //! Storage module
 use crate::hours::types;
-use crate::string_types::FilePath;
+use crate::strict_string::FilePath;
 use std::fs;
 
 /// Common store functionality
@@ -35,16 +35,16 @@ impl Store for DiskStore {
 #[cfg(test)]
 mod tests {
     use super::super::*;
-    use crate::string_types::{Description, FilePath, ProjectName};
+    use crate::strict_string::{Description, ProjectName};
     use chrono::Duration;
     use std::fs::File;
 
     #[test]
     fn return_empty_list_of_entries_by_default() {
-        let filepath = FilePath("/tmp/test.toml".to_string());
+        let filepath = FilePath::new("/tmp/test.toml".to_string());
         File::create(filepath.as_str()).unwrap();
         let store = DiskStore {
-            path: FilePath("/tmp/test.toml".to_string()),
+            path: FilePath::new("/tmp/test.toml".to_string()),
         };
 
         let loaded_entries = store.load();
@@ -53,16 +53,16 @@ mod tests {
     }
     #[test]
     fn saves_entries_into_file() {
-        let filepath = FilePath("/tmp/test.toml".to_string());
+        let filepath = FilePath::new("/tmp/test.toml".to_string());
         File::create(filepath.as_str()).unwrap();
         let store = DiskStore {
-            path: FilePath("/tmp/test.toml".to_string()),
+            path: FilePath::new("/tmp/test.toml".to_string()),
         };
         let time_entries = types::TimeEntries {
             entries: [types::TimeEntry {
-                description: Description("Description".to_string()),
+                description: Description::new("Description".to_string()),
                 client: None,
-                project: ProjectName("TestProject".to_string()),
+                project: ProjectName::new("TestProject".to_string()),
                 billable_amount_cents: 0,
                 start: Some(Local::now()),
                 end: Some(

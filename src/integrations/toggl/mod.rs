@@ -4,7 +4,7 @@
 
 use crate::hours::{self, ui};
 use crate::settings;
-use crate::string_types::{ApiKey, WorkspaceName, Fullname, Email, ProjectName, Description};
+use crate::strict_string::{ApiKey, WorkspaceName, Fullname, Email, ProjectName, Description};
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 mod api;
@@ -94,9 +94,9 @@ pub fn time_entries_for_dates(
         .concat()
         .iter()
         .map(|api_entry| hours::types::TimeEntry {
-            description: api_entry.description.clone().unwrap_or(Description(String::from(""))),
+            description: api_entry.description.clone().unwrap_or(Description::new(String::from(""))),
             client: api_entry.client.clone(),
-            project: api_entry.project.clone().unwrap_or(ProjectName(String::from(""))),
+            project: api_entry.project.clone().unwrap_or(ProjectName::new(String::from(""))),
             start: api_entry.start,
             end: api_entry.end,
             billable_amount_cents: (api_entry.billable.unwrap_or(0.0) * 100.0) as usize,

@@ -1,7 +1,7 @@
 //! Store and load settings
 use crate::hours::types::Project;
 use crate::integrations::toggl::Config as TogglConfig;
-use crate::string_types::ProjectHash;
+use crate::strict_string::ProjectHash;
 use chrono::{DateTime, Local};
 use directories_next::ProjectDirs;
 use serde::{Deserialize, Serialize};

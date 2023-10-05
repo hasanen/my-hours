@@ -1,7 +1,7 @@
 pub mod types;
 use chrono::NaiveDate;
 use std::collections::HashMap;
-use crate::string_types::ApiKey;
+use crate::strict_string::ApiKey;
 
 static API_URL: &str = "https://api.track.toggl.com";
 static API_BASIC_AUTH_PW: &str = "api_token";
