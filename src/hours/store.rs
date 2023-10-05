@@ -42,7 +42,7 @@ mod tests {
     #[test]
     fn return_empty_list_of_entries_by_default() {
         let filepath = FilePath("/tmp/test.toml".to_string());
-        File::create(&filepath.as_str()).unwrap();
+        File::create(filepath.as_str()).unwrap();
         let store = DiskStore {
             path: FilePath("/tmp/test.toml".to_string()),
         };
@@ -54,7 +54,7 @@ mod tests {
     #[test]
     fn saves_entries_into_file() {
         let filepath = FilePath("/tmp/test.toml".to_string());
-        File::create(&filepath.as_str()).unwrap();
+        File::create(filepath.as_str()).unwrap();
         let store = DiskStore {
             path: FilePath("/tmp/test.toml".to_string()),
         };

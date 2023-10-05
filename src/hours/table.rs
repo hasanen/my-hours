@@ -48,7 +48,7 @@ pub fn generate_table(
         Cell::new(""),
     ]);
 
-    return table;
+    table
 }
 
 fn header_cell<T: ToString>(content: T) -> Cell {
@@ -300,7 +300,7 @@ mod tests {
                 .to_vec(),
             };
             let mut hasher = Sha256::default();
-            hasher.update(&project_name.as_str());
+            hasher.update(project_name.as_str());
             let project_key = ProjectHash(format!("{:x}", &hasher.finalize()));
 
             let project_configs = ProjectConfigs {

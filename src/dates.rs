@@ -29,7 +29,7 @@ mod tests {
         #[test]
         fn given_day_in_middle_of_month() {
             let wednesday = &NaiveDate::from_ymd_opt(2022, 01, 12).unwrap();
-            let (start_date, end_date) = month_first_and_last_dates(&wednesday);
+            let (start_date, end_date) = month_first_and_last_dates(wednesday);
 
             assert_eq!(start_date, NaiveDate::from_ymd_opt(2022, 1, 1).unwrap());
             assert_eq!(end_date, NaiveDate::from_ymd_opt(2022, 1, 31).unwrap());

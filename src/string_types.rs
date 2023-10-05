@@ -53,9 +53,9 @@ impl FilePath {
       &self.0
   }
 }
-impl Into<ApiKey> for String {
-  fn into(self) -> ApiKey {
-      ApiKey(self)
+impl From<String> for ApiKey {
+  fn from(val: String) -> Self {
+      ApiKey(val)
   }
 }
 
