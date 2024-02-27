@@ -19,7 +19,7 @@ read_input = "0.8.6"
 toml = "0.8.10"
 serde = { version = "1.0.196", features = ["derive"] }
 reqwest = { version = "0.11.24", features = ["json"] }
-serde_json = "1.0.113"
+serde_json = "1.0.114"
 tokio = { version = "1.36.0", features = ["full"] }
 chrono = { version = "0.4.34", features = ["serde"] }
 sha2 = "0.10.8"
