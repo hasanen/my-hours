@@ -1,10 +1,10 @@
+use crate::strict_string::{ClientName, Description, ProjectHash, ProjectName};
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, Weekday};
 use digest::Digest;
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use std::collections::HashSet;
 use std::str;
-use crate::strict_string::{Description, ClientName, ProjectName, ProjectHash};
 
 pub trait TimeEntryCalculations {
     fn entries(&self) -> &Vec<TimeEntry>;
@@ -176,9 +176,4 @@ impl TimeEntryCalculations for Project {
     fn entries(&self) -> &Vec<TimeEntry> {
         &self.entries
     }
-}
-
-#[derive(Debug)]
-pub struct CommonHours<'a> {
-    pub target_daily_hours: &'a u8,
 }
