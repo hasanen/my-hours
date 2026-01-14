@@ -24,4 +24,4 @@ tokio = { version = "1.49.0", features = ["full"] }
 chrono = { version = "0.4.42", features = ["serde"] }
 sha2 = "0.10.9"
 digest = "0.10.7"
-comfy-table = "7.2.1"
+comfy-table = "7.2.2"
