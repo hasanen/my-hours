@@ -1,8 +1,7 @@
 use crate::strict_string::{ClientName, Description, ProjectHash, ProjectName};
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, Weekday};
-use digest::Digest;
 use serde::{Deserialize, Serialize};
-use sha2::Sha256;
+use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 use std::str;
 

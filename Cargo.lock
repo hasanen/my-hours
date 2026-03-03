@@ -925,7 +925,6 @@ dependencies = [
  "chrono",
  "clap",
  "comfy-table",
- "digest",
  "directories-next",
  "read_input",
  "reqwest",

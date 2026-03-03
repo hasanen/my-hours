@@ -276,8 +276,7 @@ mod tests {
     mod formats_table {
         use super::super::*;
         use chrono::Local;
-        use digest::Digest;
-        use sha2::Sha256;
+        use sha2::{Digest, Sha256};
         use std::collections::HashMap;
         use crate::strict_string::{ProjectName, Description, ProjectHash};
 
