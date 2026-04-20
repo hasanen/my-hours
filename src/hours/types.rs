@@ -137,9 +137,9 @@ impl TimeEntries {
         let mut projects = HashSet::new();
 
         for entry in self.entries.iter() {
-            let mut hasher = Sha256::default();
+            let mut hasher = Sha256::new();
             hasher.update(entry.project.as_str());
-            let finalized_hash = format!("{:x}", &hasher.finalize());
+            let finalized_hash = hasher.finalize().iter().map(|b| format!("{:02x}", b)).collect::<String>();
             let project = Project {
                 title: entry.project.clone(),
                 client: entry.client.clone(),
@@ -174,5 +174,23 @@ pub struct Project {
 impl TimeEntryCalculations for Project {
     fn entries(&self) -> &Vec<TimeEntry> {
         &self.entries
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn project_hash_is_stable() {
+        // Regression test: ensure the SHA-256 hash used for project keys
+        // does not change when updating the sha2 crate.
+        let mut hasher = Sha256::new();
+        hasher.update("Project");
+        let hash = hasher.finalize().iter().map(|b| format!("{:02x}", b)).collect::<String>();
+        assert_eq!(
+            hash,
+            "985959785319747668373cc6dee294b11db782b03cdd90a2851fbdc0637c6b7b"
+        );
     }
 }

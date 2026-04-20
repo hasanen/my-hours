@@ -298,9 +298,9 @@ mod tests {
                 }]
                 .to_vec(),
             };
-            let mut hasher = Sha256::default();
+            let mut hasher = Sha256::new();
             hasher.update(project_name.as_str());
-            let project_key = ProjectHash::new(format!("{:x}", &hasher.finalize()));
+            let project_key = ProjectHash::new(hasher.finalize().iter().map(|b| format!("{:02x}", b)).collect::<String>());
 
             let project_configs = ProjectConfigs {
                 configs: HashMap::from([(
