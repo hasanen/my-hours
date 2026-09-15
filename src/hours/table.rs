@@ -10,7 +10,7 @@ pub fn generate_table(
     project_configs: &ProjectConfigs,
 ) -> Table {
     let mut table = Table::new();
-    table.load_preset(ASCII_NO_BORDERS).set_header(vec![
+    table.load_style(ASCII_NO_BORDERS).set_header(vec![
         header_cell("Project"),
         header_cell("Today"),
         header_cell("Current week / Daily AVG"),
